@@ -2,23 +2,26 @@ import { AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
 import { sendEmail } from "./emails";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "./prisma";
 
 export const authOptions: AuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
-    // EmailProvider({
-    //   sendVerificationRequest({ identifier, url }) {
-    //     console.log(`Login link: ${url}`);
-    //     // if (process.env.NODE_ENV === "development") {
-    //     //   return;
-    //     // } else {
-    //     //   sendEmail({
-    //     //     email: identifier,
-    //     //     subject: "Your Dub Login Link",
-    //     //     react: LoginLink({ url, email: identifier }),
-    //     //   });
-    //     // }
-    //   },
-    // }),
+    EmailProvider({
+      sendVerificationRequest({ identifier, url }) {
+        console.log(`Login link: ${url}`);
+        // if (process.env.NODE_ENV === "development") {
+        //   return;
+        // } else {
+        //   sendEmail({
+        //     email: identifier,
+        //     subject: "Your Dub Login Link",
+        //     react: LoginLink({ url, email: identifier }),
+        //   });
+        // }
+      },
+    }),
     GithubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
       clientSecret: process.env.AUTH_GITHUB_SECRET as string,
