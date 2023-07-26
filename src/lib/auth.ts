@@ -41,6 +41,17 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.user = user;
       }
+      if (trigger === "update") {
+        const refreshedUser = await prisma.user.findUnique({
+          where: {
+            id: token.sub,
+          },
+        });
+        token.user = refreshedUser;
+        token.email = refreshedUser?.email;
+        token.name = refreshedUser?.name;
+        token.image = refreshedUser?.image;
+      }
       return token;
     },
     session: async ({ session, token }) => {
@@ -50,6 +61,39 @@ export const authOptions: AuthOptions = {
         ...session.user,
       };
       return session;
+    },
+    signIn: async ({ user, profile, account }) => {
+      if (!user.email) {
+        return false;
+      }
+      if (account?.provider === "github") {
+        const userExist = await prisma.user.findUnique({
+          where: {
+            email: user.email,
+          },
+          select: {
+            name: true,
+          },
+        });
+        if (userExist && !userExist.name && profile?.name) {
+          await prisma.user.update({
+            where: {
+              email: user.email,
+            },
+            data: {
+              name: profile.name,
+            },
+          });
+        }
+      }
+      return true;
+    },
+  },
+  events: {
+    signIn: async ({ user, isNewUser }) => {
+      if (isNewUser) {
+        console.log("NEW USER CREATED", user);
+      }
     },
   },
 };

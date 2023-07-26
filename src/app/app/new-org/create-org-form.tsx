@@ -92,7 +92,7 @@ export default function CreateOrgForm() {
 
             <Button type="submit" className="w-full">
               {form.formState.isSubmitting ? (
-                <Loader2 size={18} className="animate-spin" />
+                <Loader2 size={20} className="animate-spin" />
               ) : (
                 <span>Create Organization</span>
               )}

@@ -22,6 +22,13 @@ export const APP_DOMAIN =
     : process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
     ? `https://preview.${BASE_DOMAIN}`
     : `http://app.${BASE_LOCALHOST}`;
+export const RESURVED_APP_PATH_KEYS = new Set([
+  "login",
+  "register",
+  "new-org",
+  "settings",
+  "new",
+]);
 
 export const ADMIN_HOSTNAMES = new Set([
   `admin.${BASE_LOCALHOST}`,

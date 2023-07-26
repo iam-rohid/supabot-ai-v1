@@ -1,15 +1,11 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { parseReq } from "./utils";
 import { getToken } from "next-auth/jwt";
-import { AUTH_PATHNAMES } from "../constants";
+import { AUTH_PATHNAMES, RESURVED_APP_PATH_KEYS } from "../constants";
 import { psDB } from "../planetscale";
 
-const query = `SELECT organizations.slug from organization_members
-INNER JOIN organizations ON organizations.id = organization_members.organization_id
-WHERE user_id = ?`;
-
 export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
-  const { pathname } = parseReq(req);
+  const { pathname, pathKey } = parseReq(req);
   const sesson = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
@@ -26,22 +22,25 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
     return NextResponse.redirect(new URL("/", req.url));
   }
   if (pathname === "/") {
-    // const something = await prisma.organization.findFirst({
-    //   where: {
-    //     members: {
-    //       some: {
-    //         userId: sesson?.sub,
-    //       },
-    //     },
-    //   },
-    // });
-    const something = await psDB.execute(query, [sesson?.user?.id]);
-    console.log(something);
-    if (something.rows.length > 0) {
-      const row = something.rows[0] as { slug: string };
+    const query = `SELECT organizations.slug from organization_members
+INNER JOIN organizations ON organizations.id = organization_members.organization_id
+WHERE organization_members.user_id = ?`;
+    const result = await psDB.execute(query, [sesson?.user?.id]);
+    if (result.rows.length > 0) {
+      const row = result.rows[0] as { slug: string };
       return NextResponse.redirect(new URL(`/${row.slug}`, req.url));
     }
     return NextResponse.redirect(new URL("/new-org", req.url));
+  }
+
+  if (!RESURVED_APP_PATH_KEYS.has(pathKey)) {
+    const query = `SELECT organizations.slug from organization_members
+INNER JOIN organizations ON organizations.id = organization_members.organization_id
+WHERE organization_members.user_id = ? AND organizations.slug = ?`;
+    const result = await psDB.execute(query, [sesson?.user?.id, pathKey]);
+    if (result.size === 0) {
+      return NextResponse.next();
+    }
   }
   return NextResponse.rewrite(new URL(`/app${pathname}`, req.url));
 }
