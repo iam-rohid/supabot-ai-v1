@@ -23,8 +23,7 @@ export default function UserButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-full inline-flex">
-        <Avatar>
-          <AvatarFallback></AvatarFallback>
+        <Avatar className="w-10 h-10">
           <AvatarImage
             src={data.user?.image || `/api/avatar/${data.user.email}`}
           />

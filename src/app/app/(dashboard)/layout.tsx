@@ -4,6 +4,7 @@ import Link from "next/link";
 import Nav from "./nav";
 import UserButton from "./user-button";
 import ThemeSwitcher from "@/components/theme-switcher";
+import ProjectSwitcher from "./project-switcher";
 
 export const metadata: Metadata = {
   title: APP_NAME,
@@ -21,7 +22,9 @@ export default function HomeLayout({
           <Link href="/">
             <div className="w-8 h-8 rounded-full bg-accent-foreground" />
           </Link>
-          <div className="flex items-center gap-4">
+          <span className="text-2xl text-muted-foreground/50 mx-4">/</span>
+          <ProjectSwitcher />
+          <div className="flex flex-1 justify-end items-center gap-4">
             <ThemeSwitcher />
             <UserButton />
           </div>
