@@ -18,7 +18,11 @@ export default function UserButton() {
   const { status, data } = useSession();
   const pathname = usePathname();
   if (status !== "authenticated") {
-    return null;
+    return (
+      <Avatar className="w-10 h-10">
+        <AvatarFallback className="w-full h-full bg-muted" />
+      </Avatar>
+    );
   }
   return (
     <DropdownMenu>

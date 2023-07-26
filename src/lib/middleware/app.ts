@@ -2,6 +2,11 @@ import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { parseReq } from "./utils";
 import { getToken } from "next-auth/jwt";
 import { AUTH_PATHNAMES } from "../constants";
+import { psDB } from "../planetscale";
+
+const query = `SELECT organizations.slug from organization_members
+INNER JOIN organizations ON organizations.id = organization_members.organization_id
+WHERE user_id = ?`;
 
 export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
   const { pathname } = parseReq(req);
@@ -20,7 +25,23 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
   } else if (sesson?.email && AUTH_PATHNAMES.has(pathname)) {
     return NextResponse.redirect(new URL("/", req.url));
   }
-  return NextResponse.rewrite(
-    new URL(`/app${pathname === "/" ? "" : pathname}`, req.url)
-  );
+  if (pathname === "/") {
+    // const something = await prisma.organization.findFirst({
+    //   where: {
+    //     members: {
+    //       some: {
+    //         userId: sesson?.sub,
+    //       },
+    //     },
+    //   },
+    // });
+    const something = await psDB.execute(query, [sesson?.user?.id]);
+    console.log(something);
+    if (something.rows.length > 0) {
+      const row = something.rows[0] as { slug: string };
+      return NextResponse.redirect(new URL(`/${row.slug}`, req.url));
+    }
+    return NextResponse.redirect(new URL("/new-org", req.url));
+  }
+  return NextResponse.rewrite(new URL(`/app${pathname}`, req.url));
 }

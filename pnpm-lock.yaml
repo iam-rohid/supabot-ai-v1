@@ -11,6 +11,9 @@ dependencies:
   '@next-auth/prisma-adapter':
     specifier: ^1.0.7
     version: 1.0.7(@prisma/client@5.0.0)(next-auth@4.22.3)
+  '@planetscale/database':
+    specifier: ^1.10.0
+    version: 1.10.0
   '@prisma/client':
     specifier: ^5.0.0
     version: 5.0.0(prisma@5.0.0)
@@ -92,6 +95,9 @@ dependencies:
   '@radix-ui/react-tooltip':
     specifier: ^1.0.6
     version: 1.0.6(@types/react-dom@18.2.7)(@types/react@18.2.16)(react-dom@18.2.0)(react@18.2.0)
+  '@tanstack/react-query':
+    specifier: ^4.32.0
+    version: 4.32.0(react-dom@18.2.0)(react@18.2.0)
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.0
@@ -448,6 +454,11 @@ packages:
       picocolors: 1.0.0
       tslib: 2.6.1
     dev: true
+
+  /@planetscale/database@1.10.0:
+    resolution: {integrity: sha512-XMfNRjIPgGTga6g1YpGr7E21CcnHZcHZdyhRUIiZ/AlpD+ts65UF2B3wKjcu7MKMynmmcOGs6R9kAT6D1OTlZQ==}
+    engines: {node: '>=16'}
+    dev: false
 
   /@prisma/client@5.0.0(prisma@5.0.0):
     resolution: {integrity: sha512-XlO5ELNAQ7rV4cXIDJUNBEgdLwX3pjtt9Q/RHqDpGf43szpNJx2hJnggfFs7TKNx0cOFsl6KJCSfqr5duEU/bQ==}
@@ -1870,6 +1881,28 @@ packages:
     resolution: {integrity: sha512-sJ902EfIzn1Fa+qYmjdQqh8tPsoxyBz+8yBKC2HKUxyezKJFwPGOn7pv4WY6QuQW//ySQi5lJjA/ZT9sNWWNTg==}
     dependencies:
       tslib: 2.6.1
+    dev: false
+
+  /@tanstack/query-core@4.32.0:
+    resolution: {integrity: sha512-ei4IYwL2kmlKSlCw9WgvV7PpXi0MiswVwfQRxawhJA690zWO3dU49igaQ/UMTl+Jy9jj9dK5IKAYvbX7kUvviQ==}
+    dev: false
+
+  /@tanstack/react-query@4.32.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-B8WUMcByYAH9500ENejDCATOmEZhqjtS9wsfiQ3BNa+s+yAynY8SESI8WWHhSqUmjd0pmCSFRP6BOUGSda3QXA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 4.32.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
   /@types/json5@0.0.29:
@@ -4739,6 +4772,14 @@ packages:
       detect-node-es: 1.1.0
       react: 18.2.0
       tslib: 2.6.1
+    dev: false
+
+  /use-sync-external-store@1.2.0(react@18.2.0):
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /util-deprecate@1.0.2:
