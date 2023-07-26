@@ -80,7 +80,8 @@ model Organization {
   name      String   @db.VarChar(32)
   slug      String   @unique @db.VarChar(32)
 
-  members OrganizationMember[]
+  members  OrganizationMember[]
+  chatbots Chatbot[]
 
   @@index([name])
   @@map("organizations")
@@ -107,4 +108,19 @@ model OrganizationMember {
   @@index([userId])
   @@index([organizationId])
   @@map("organization_members")
+}
+
+model Chatbot {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  name           String   @db.VarChar(80)
+  description    String   @db.VarChar(300)
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([name])
+  @@map("chatbots")
 }
