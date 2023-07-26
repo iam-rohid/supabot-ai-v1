@@ -1,6 +1,11 @@
-import { APP_DOMAIN } from "@/lib/constants";
+import { APP_DOMAIN, APP_NAME } from "@/lib/constants";
+import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: `Welcome to ${APP_NAME}`,
+};
 
 export default function HomeLayout({
   children,

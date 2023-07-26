@@ -1,3 +1,5 @@
+export const APP_NAME = "SiteChat AI";
+
 export const BASE_LOCALHOST = "localhost:3000";
 export const BASE_DOMAIN = "sitechat-ai.com";
 
@@ -25,3 +27,5 @@ export const ADMIN_HOSTNAMES = new Set([
   `admin.${BASE_LOCALHOST}`,
   `admin.${BASE_DOMAIN}`,
 ]);
+
+export const AUTH_PATHNAMES = new Set(["/login", "/register"]);
