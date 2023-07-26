@@ -9,6 +9,24 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  role          UserRole  @default(ADMIN)
+
+  @@map("users")
+}
+
 model Account {
   id                       String  @id @default(cuid())
   userId                   String  @map("user_id")
@@ -40,18 +58,6 @@ model Session {
 
   @@index([userId])
   @@map("sessions")
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-
-  @@map("users")
 }
 
 model VerificationToken {
