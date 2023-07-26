@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { Organization } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -20,7 +21,7 @@ import { useMemo } from "react";
 export default function OrganizationSwitcher() {
   const { data } = useSession();
   const { organization } = useParams();
-  const orgsQuery = useQuery<{ name: string; slug: string }[]>({
+  const orgsQuery = useQuery<Organization[]>({
     queryKey: ["organizations", data?.user.id],
     queryFn: async () => {
       const res = await fetch("/api/organizations");
@@ -54,7 +55,7 @@ export default function OrganizationSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="px-2 -mx-2">
           <img
-            src={`/api/avatar/${currentOrg?.slug}`}
+            src={`/api/avatar/${currentOrg?.id}`}
             className="w-6 h-6 mr-2 rounded-full object-cover"
             alt="Organization avatar"
           />
@@ -67,7 +68,7 @@ export default function OrganizationSwitcher() {
           <DropdownMenuItem key={org.slug} asChild>
             <Link href={`/${org.slug}`}>
               <img
-                src={`/api/avatar/${org.slug}`}
+                src={`/api/avatar/${org.id}`}
                 alt="Organization Image"
                 className="w-5 h-5 rounded-full object-cover mr-2"
               />
