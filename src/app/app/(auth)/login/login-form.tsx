@@ -54,10 +54,10 @@ export default function LogInForm() {
           Continue with Email
         </Button>
       </form>
-      <div className="flex items-center gap-4 my-6">
-        <div className="flex-1 h-px bg-muted" />
+      <div className="my-6 flex items-center gap-4">
+        <div className="h-px flex-1 bg-muted" />
         <p className="text-sm text-muted-foreground/50">OR</p>
-        <div className="flex-1 h-px bg-muted" />
+        <div className="h-px flex-1 bg-muted" />
       </div>
       <div className="flex flex-col gap-3">
         {/* <Button variant="outline" className="w-full">
@@ -77,7 +77,7 @@ export default function LogInForm() {
           {isLoading ? (
             <Loader2Icon size={20} className="mr-2 animate-spin" />
           ) : (
-            <GithubIcon className="text-2xl mr-2" />
+            <GithubIcon className="mr-2 text-2xl" />
           )}
           Sign in with Github
         </Button>

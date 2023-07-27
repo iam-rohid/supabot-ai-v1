@@ -15,8 +15,8 @@ export default function HomeLayout({
 }) {
   return (
     <div>
-      <header className="bg-card text-card-foreground border-b">
-        <div className="container h-16 flex items-center justify-between">
+      <header className="border-b bg-card text-card-foreground">
+        <div className="container flex h-16 items-center justify-between">
           <Link
             href={HOME_DOMAIN}
             className="text-xl font-bold text-accent-foreground"
@@ -24,15 +24,15 @@ export default function HomeLayout({
             {APP_NAME}
           </Link>
           <div className="flex items-center">
-            <nav className="flex items-center gap-8 mr-8">
+            <nav className="mr-8 flex items-center gap-8">
               <Link
-                className="text-sm font-medium hover:text-accent-foreground text-muted-foreground"
+                className="text-sm font-medium text-muted-foreground hover:text-accent-foreground"
                 href="/"
               >
                 Home
               </Link>
               <Link
-                className="text-sm font-medium hover:text-accent-foreground text-muted-foreground"
+                className="text-sm font-medium text-muted-foreground hover:text-accent-foreground"
                 href="/pricing"
               >
                 Pricing

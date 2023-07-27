@@ -19,8 +19,8 @@ export default function UserButton() {
   const { organization } = useParams();
   if (status !== "authenticated") {
     return (
-      <div className="w-10 h-10 flex items-center justify-center">
-        <div className="w-8 h-8 bg-muted rounded-full" />
+      <div className="flex h-10 w-10 items-center justify-center">
+        <div className="h-8 w-8 rounded-full bg-muted" />
       </div>
     );
   }
@@ -31,7 +31,7 @@ export default function UserButton() {
         <Button variant="ghost" size="icon" className="rounded-full">
           <img
             src={data.user.image || `/api/avatar/${data.user.id}`}
-            className="w-8 h-8 rounded-full object-cover"
+            className="h-8 w-8 rounded-full object-cover"
             alt="Organization avatar"
           />
         </Button>

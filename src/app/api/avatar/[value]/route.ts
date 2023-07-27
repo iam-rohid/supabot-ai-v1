@@ -3,7 +3,7 @@ import { generateSVG } from "./gradients";
 
 export const GET = async (
   req: NextRequest,
-  { params }: { params: { value: string } }
+  { params }: { params: { value: string } },
 ) => {
   const size = req.nextUrl.searchParams.has("size")
     ? Number(req.nextUrl.searchParams.has("size"))

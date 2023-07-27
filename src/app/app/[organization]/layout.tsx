@@ -21,17 +21,17 @@ export default async function OrganizationLayout({
   };
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-muted">
+    <div className="flex min-h-screen flex-col bg-muted">
       <header className="border-b bg-card text-card-foreground">
-        <div className="container h-16 flex items-center justify-between">
+        <div className="container flex h-16 items-center justify-between">
           <Button variant="ghost" size="icon" className="rounded-full" asChild>
             <Link href={`/${organization}`}>
-              <div className="w-8 h-8 rounded-full bg-accent-foreground" />
+              <div className="h-8 w-8 rounded-full bg-accent-foreground" />
             </Link>
           </Button>
-          <span className="text-2xl text-muted-foreground/50 mx-4">/</span>
+          <span className="mx-4 text-2xl text-muted-foreground/50">/</span>
           <OrganizationSwitcher />
-          <div className="flex flex-1 justify-end items-center gap-4">
+          <div className="flex flex-1 items-center justify-end gap-4">
             <ThemeSwitcher />
             <UserButton />
           </div>

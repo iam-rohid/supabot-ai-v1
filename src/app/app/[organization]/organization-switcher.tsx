@@ -34,14 +34,14 @@ export default function OrganizationSwitcher() {
 
   const currentOrg = useMemo(
     () => orgsQuery.data?.find((org) => org.slug === organization),
-    [organization, orgsQuery.data]
+    [organization, orgsQuery.data],
   );
 
   if (!orgsQuery.isSuccess) {
     return (
-      <div className="pl-2 -mx-2 pr-4 h-10 rounded-md bg-muted flex items-center">
-        <div className="w-6 h-6 rounded-full bg-foreground/10 mr-2" />
-        <div className="w-20 h-4 rounded-sm bg-foreground/10" />
+      <div className="-mx-2 flex h-10 items-center rounded-md bg-muted pl-2 pr-4">
+        <div className="mr-2 h-6 w-6 rounded-full bg-foreground/10" />
+        <div className="h-4 w-20 rounded-sm bg-foreground/10" />
       </div>
     );
   }
@@ -53,10 +53,10 @@ export default function OrganizationSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="px-2 -mx-2">
+        <Button variant="ghost" className="-mx-2 px-2">
           <img
             src={`/api/avatar/${currentOrg?.id}`}
-            className="w-6 h-6 mr-2 rounded-full object-cover"
+            className="mr-2 h-6 w-6 rounded-full object-cover"
             alt="Organization avatar"
           />
           {currentOrg?.name}
@@ -70,7 +70,7 @@ export default function OrganizationSwitcher() {
               <img
                 src={`/api/avatar/${org.id}`}
                 alt="Organization Image"
-                className="w-5 h-5 rounded-full object-cover mr-2"
+                className="mr-2 h-5 w-5 rounded-full object-cover"
               />
               <span className="flex-1 truncate">{org.name}</span>
               <CheckIcon

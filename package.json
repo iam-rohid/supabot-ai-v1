@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"prisma studio --browser none\"",
     "build": "prisma generate & next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "dev:studio": "prisma studio"
+    "dev:studio": "prisma studio",
+    "format:write": "prettier --write \"./src/**/*.{css,js,json,jsx,ts,tsx}\"",
+    "format": "prettier \"./src/**/*.{css,js,json,jsx,ts,tsx}\""
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",
@@ -67,9 +69,11 @@
     "@types/react": "18.2.16",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.14",
+    "concurrently": "^8.2.0",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.12",
     "postcss": "8.4.27",
+    "prettier-plugin-tailwindcss": "^0.4.1",
     "prisma": "^5.0.0",
     "tailwindcss": "3.3.3",
     "typescript": "5.1.6"

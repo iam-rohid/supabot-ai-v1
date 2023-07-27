@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-muted items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-muted">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign in to {APP_NAME}</CardTitle>

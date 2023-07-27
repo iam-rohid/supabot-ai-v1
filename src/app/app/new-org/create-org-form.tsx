@@ -48,11 +48,11 @@ export default function CreateOrgForm() {
         console.log("Failed to create org", error);
       }
     },
-    [router]
+    [router],
   );
 
   return (
-    <Card className="max-w-md mx-auto my-32">
+    <Card className="mx-auto my-32 max-w-md">
       <CardHeader>
         <CardTitle>Create organization</CardTitle>
       </CardHeader>
