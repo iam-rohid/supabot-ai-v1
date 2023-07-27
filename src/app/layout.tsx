@@ -22,7 +22,6 @@ export default function RootLayout({
           if(!['dark','light'].includes(theme)) {
             theme = '${SYSTEM_THEME}';
           }
-          console.log({theme})
           const isPrefersColorSchemeDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
           const isDark = theme === 'dark' || (theme === '${SYSTEM_THEME}' && isPrefersColorSchemeDark);
           document.documentElement.classList.toggle('dark', isDark);

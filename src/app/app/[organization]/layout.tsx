@@ -26,7 +26,7 @@ export default async function OrganizationLayout({
         <div className="container flex h-16 items-center justify-between">
           <Button variant="ghost" size="icon" className="rounded-full" asChild>
             <Link href={`/${organization}`}>
-              <div className="h-8 w-8 rounded-full bg-accent-foreground" />
+              <div className="h-10 w-10 rounded-full bg-accent-foreground" />
             </Link>
           </Button>
           <span className="mx-4 text-2xl text-muted-foreground/50">/</span>
