@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Nav from "./nav";
 import UserButton from "./user-button";
-import ThemeSwitcher from "@/components/theme-switcher";
 import OrganizationSwitcher from "./organization-switcher";
 import { Button } from "@/components/ui/button";
+import ThemeSwitcher from "@/components/theme-switcher";
 
 export const metadata: Metadata = {
   title: APP_NAME,

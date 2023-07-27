@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -44,6 +44,7 @@ export default function SignInForm() {
     () => form.formState.isSubmitting || oauthSingInOpen,
     [form.formState.isSubmitting, oauthSingInOpen],
   );
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleSubmit = useCallback(
     async ({ email }: SchemaData) => {

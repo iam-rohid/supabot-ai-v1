@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CheckIcon, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { CheckIcon, Computer, Moon, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,22 +11,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useTheme } from "./theme-provider";
 
 export default function ThemeSwitcher() {
-  const { setTheme, theme } = useTheme();
+  const { isLoading, setTheme, theme } = useTheme();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center">
+        <div className="h-8 w-8 rounded-full bg-muted" />
+      </div>
+    );
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
-          <Sun
-            size={20}
-            className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-          />
-          <Moon
-            size={20}
-            className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-          />
+          {theme === "light" ? (
+            <Sun size={20} />
+          ) : theme === "dark" ? (
+            <Moon size={20} />
+          ) : (
+            <Computer size={20} />
+          )}
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>

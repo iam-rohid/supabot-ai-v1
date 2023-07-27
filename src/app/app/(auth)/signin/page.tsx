@@ -4,6 +4,7 @@ import SignInForm from "./signin-form";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: `Sign in to ${APP_NAME}`,
@@ -22,7 +23,9 @@ export default function SignInPage() {
           </Button>
         </div>
       </div>
-      <SignInForm />
+      <Suspense fallback={<p>Loading...</p>}>
+        <SignInForm />
+      </Suspense>
     </div>
   );
 }

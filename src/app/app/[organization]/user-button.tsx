@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
+import { useDomLoaded } from "@/hooks/useDomLoaded";
 import { LogOutIcon, SettingsIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -20,6 +21,7 @@ export default function UserButton() {
   const { status, data } = useSession();
   const { toast } = useToast();
   const router = useRouter();
+  const domLoaded = useDomLoaded();
 
   const handleSignOut = async () => {
     try {
@@ -38,7 +40,7 @@ export default function UserButton() {
     }
   };
 
-  if (status !== "authenticated") {
+  if (!domLoaded || status !== "authenticated") {
     return (
       <div className="flex h-10 w-10 items-center justify-center">
         <div className="h-8 w-8 rounded-full bg-muted" />

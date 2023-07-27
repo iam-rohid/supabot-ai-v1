@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useDomLoaded } from "@/hooks/useDomLoaded";
 import { cn } from "@/lib/utils";
 import { Organization } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -21,6 +22,8 @@ import { useMemo } from "react";
 export default function OrganizationSwitcher() {
   const { data } = useSession();
   const { organization } = useParams();
+  const domLoaded = useDomLoaded();
+
   const orgsQuery = useQuery<Organization[]>({
     queryKey: ["organizations", data?.user.id],
     queryFn: async () => {
@@ -37,7 +40,7 @@ export default function OrganizationSwitcher() {
     [organization, orgsQuery.data],
   );
 
-  if (!orgsQuery.isSuccess) {
+  if (!domLoaded || !orgsQuery.isSuccess) {
     return (
       <div className="-mx-2 flex h-10 items-center rounded-md bg-muted pl-2 pr-4">
         <div className="mr-2 h-6 w-6 rounded-full bg-foreground/10" />
