@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,14 +10,34 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 import { LogOutIcon, SettingsIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function UserButton() {
   const { status, data } = useSession();
-  const { organization } = useParams();
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut({
+        redirect: false,
+      });
+      localStorage.clear();
+      toast({ title: "Sign out success" });
+      router.push("/signin");
+    } catch (error) {
+      console.log("Faield to signout", error);
+      toast({
+        title: "Failed to signout!",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (status !== "authenticated") {
     return (
       <div className="flex h-10 w-10 items-center justify-center">
@@ -53,7 +74,7 @@ export default function UserButton() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuItem onClick={handleSignOut}>
             <LogOutIcon size={20} className="mr-2" />
             <div className="flex-1 truncate">Log Out</div>
           </DropdownMenuItem>

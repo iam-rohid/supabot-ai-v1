@@ -28,9 +28,9 @@ export const authOptions: AuthOptions = {
     }),
   ],
   pages: {
-    error: "/login",
-    signIn: "/login",
-    verifyRequest: "/login",
+    error: "/signin",
+    signIn: "/signin",
+    verifyRequest: "/signin",
   },
   session: { strategy: "jwt" },
   callbacks: {

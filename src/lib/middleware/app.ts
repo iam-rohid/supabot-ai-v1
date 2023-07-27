@@ -16,7 +16,7 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
       params.set("next", pathname);
     }
     return NextResponse.redirect(
-      new URL(`/login?${params.toString()}`, req.url),
+      new URL(`/signin?${params.toString()}`, req.url),
     );
   } else if (sesson?.email && AUTH_PATHNAMES.has(pathname)) {
     return NextResponse.redirect(new URL("/", req.url));

@@ -39,10 +39,17 @@ export default function HomeLayout({
               </Link>
             </nav>
             <Button variant="ghost" asChild className="mr-3">
-              <Link href={`${APP_DOMAIN}/login`}>Sign In</Link>
+              <Link href={`${APP_DOMAIN}/signin`}>Sign In</Link>
             </Button>
             <Button>
-              <Link href={`${APP_DOMAIN}/register`}>Sign Up</Link>
+              <Link
+                href={{
+                  pathname: `${APP_DOMAIN}/signin`,
+                  query: new URLSearchParams({ next: "/pricing" }).toString(),
+                }}
+              >
+                Sign Up
+              </Link>
             </Button>
           </div>
         </div>
