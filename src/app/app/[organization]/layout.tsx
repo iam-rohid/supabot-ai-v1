@@ -2,10 +2,10 @@ import { APP_NAME } from "@/lib/constants";
 import { Metadata } from "next";
 import Link from "next/link";
 import Nav from "./nav";
-import UserButton from "./user-button";
 import OrganizationSwitcher from "./organization-switcher";
 import { Button } from "@/components/ui/button";
 import ThemeSwitcher from "@/components/theme-switcher";
+import UserButton from "@/components/user-button";
 
 export const metadata: Metadata = {
   title: APP_NAME,

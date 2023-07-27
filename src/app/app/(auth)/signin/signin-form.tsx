@@ -12,29 +12,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { APP_NAME } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
-  email: z
-    .string({ required_error: "Email is required" })
-    .min(1, "Email is required")
-    .email(),
+  email: z.string({ required_error: "Email is required" }).email(),
 });
 type SchemaData = z.infer<typeof schema>;
 
 export default function SignInForm() {
   const form = useForm<SchemaData>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      email: "",
-    },
   });
   const [oauthSingInOpen, setOauthSingInOpen] = useState(false);
   const searchParams = useSearchParams();

@@ -15,12 +15,12 @@ export const GET = async (
 
   const organization = await prisma.organization.findUnique({
     where: {
+      id,
       members: {
-        every: {
+        some: {
           userId: session.user.id,
         },
       },
-      id,
     },
   });
 

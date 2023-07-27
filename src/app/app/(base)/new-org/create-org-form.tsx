@@ -21,10 +21,6 @@ import { useRouter } from "next/navigation";
 export default function CreateOrgForm() {
   const form = useForm<CreateOrgData>({
     resolver: zodResolver(createOrgSchema),
-    defaultValues: {
-      name: "",
-      slug: "",
-    },
   });
   const router = useRouter();
 

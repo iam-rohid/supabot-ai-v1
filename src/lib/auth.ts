@@ -1,9 +1,12 @@
 import { AuthOptions } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import GithubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
 import { sendEmail } from "./emails";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./prisma";
+import { getSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -96,4 +99,19 @@ export const authOptions: AuthOptions = {
       }
     },
   },
+};
+
+export const requireSession = async ({
+  options,
+  redirectTo,
+}: {
+  options?: AuthOptions;
+  redirectTo?: string;
+} = {}) => {
+  const session = await getServerSession(authOptions);
+  console.log({ session });
+  if (!session) {
+    redirect(redirectTo || "/signin");
+  }
+  return session;
 };

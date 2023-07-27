@@ -4,7 +4,8 @@ export const parseReq = (req: NextRequest) => {
   let domain = req.headers.get("host") as string;
   domain.replace("wwww.", "");
   const pathname = req.nextUrl.pathname;
+  const searchParams = req.nextUrl.searchParams;
   const pathKey = decodeURIComponent(pathname.split("/")[1]);
   const pathFullKey = decodeURIComponent(pathname.slice(1));
-  return { domain, pathname, pathKey, pathFullKey };
+  return { domain, pathname, pathKey, pathFullKey, searchParams };
 };

@@ -1,8 +1,7 @@
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CreateOrgData, createOrgSchema } from "@/lib/validations/create-org";
-import { Organization } from "@prisma/client";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -16,7 +15,7 @@ export const GET = async (req: NextRequest) => {
   const organizations = await prisma.organization.findMany({
     where: {
       members: {
-        every: {
+        some: {
           userId: session.user.id,
         },
       },

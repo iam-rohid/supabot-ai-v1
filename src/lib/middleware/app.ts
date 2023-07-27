@@ -5,11 +5,13 @@ import { AUTH_PATHNAMES, RESURVED_APP_PATH_KEYS } from "../constants";
 import { psDB } from "../planetscale";
 
 export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
-  const { pathname, pathKey } = parseReq(req);
+  const { pathname, pathKey, searchParams } = parseReq(req);
+
   const sesson = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
+
   if (!sesson?.email && !AUTH_PATHNAMES.has(pathname)) {
     const params = new URLSearchParams();
     if (pathname !== "/") {
@@ -21,6 +23,7 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
   } else if (sesson?.email && AUTH_PATHNAMES.has(pathname)) {
     return NextResponse.redirect(new URL("/", req.url));
   }
+
   if (pathname === "/") {
     const query = `SELECT organizations.slug from organization_members
 INNER JOIN organizations ON organizations.id = organization_members.organization_id
@@ -42,5 +45,8 @@ WHERE organization_members.user_id = ? AND organizations.slug = ?`;
       return NextResponse.next();
     }
   }
-  return NextResponse.rewrite(new URL(`/app${pathname}`, req.url));
+
+  return NextResponse.rewrite(
+    new URL(`/app${pathname}?${searchParams.toString()}`, req.url),
+  );
 }

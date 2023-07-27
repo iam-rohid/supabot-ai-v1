@@ -115,7 +115,7 @@ model Chatbot {
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
   name           String   @db.VarChar(80)
-  description    String   @db.VarChar(300)
+  description    String?  @db.VarChar(300)
   organizationId String
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
