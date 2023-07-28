@@ -74,7 +74,6 @@ export function CreateChatbotModal({
             typeof error === "string" ? error : "Failed to create chatbot!",
           variant: "destructive",
         });
-        throw error;
       }
     },
     [onOpenChange, queryClient, router, toast],

@@ -64,7 +64,6 @@ export default function ThemeProvider({
     const theme = localStorage.getItem("theme");
     if (theme && THEMES.has(theme)) {
       setTheme(theme);
-      console.log("Theme Changed");
     } else {
       setTheme(defaultTheme);
     }

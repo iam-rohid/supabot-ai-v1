@@ -32,7 +32,6 @@ export default function UserButton() {
       toast({ title: "Sign out success" });
       router.push("/signin");
     } catch (error) {
-      console.log("Faield to signout", error);
       toast({
         title: "Failed to signout!",
         variant: "destructive",

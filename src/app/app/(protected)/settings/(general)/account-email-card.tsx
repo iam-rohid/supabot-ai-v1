@@ -24,7 +24,6 @@ import { APP_NAME } from "@/lib/constants";
 import { ApiResponse } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User } from "@prisma/client";
-import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useCallback } from "react";
@@ -40,21 +39,6 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const emailUpdateFn = async (data: FormData) => {
-  const res = await fetch("/api/users", {
-    method: "PUT",
-    body: JSON.stringify({ email: data.email }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const body: ApiResponse<User> = await res.json();
-  if (!body.success) {
-    throw body.error;
-  }
-  return body.data;
-};
-
 export default function AccountEmailCard({ email }: { email: string }) {
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -64,30 +48,32 @@ export default function AccountEmailCard({ email }: { email: string }) {
   });
   const { update } = useSession();
   const { toast } = useToast();
-  const mutation = useMutation({
-    mutationKey: ["update-account-email"],
-    mutationFn: emailUpdateFn,
-    onMutate: () => {
-      toast({ title: "Updating your email..." });
-    },
-    onSuccess() {
-      update();
-      toast({ title: "Successfully updated your email!" });
-    },
-    onError(error) {
-      toast({
-        title:
-          typeof error === "string" ? error : "Failed to update your email!",
-        variant: "destructive",
-      });
-    },
-  });
 
   const handleSubmit = useCallback(
     async (data: FormData) => {
-      await mutation.mutateAsync(data);
+      try {
+        const res = await fetch("/api/users", {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const body: ApiResponse<User> = await res.json();
+        if (!body.success) {
+          throw body.error;
+        }
+        update();
+        toast({ title: "Successfully updated your email!" });
+      } catch (error) {
+        toast({
+          title:
+            typeof error === "string" ? error : "Failed to update your email!",
+          variant: "destructive",
+        });
+      }
     },
-    [mutation],
+    [toast, update],
   );
 
   return (

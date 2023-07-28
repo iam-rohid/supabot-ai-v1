@@ -1,6 +1,5 @@
 "use client";
 
-import { useChatbots } from "@/components/chatbots-provider";
 import { useDeleteChatbotModal } from "@/components/modals/delete-chatbot-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,10 +10,10 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { APP_NAME } from "@/lib/constants";
+import { Chatbot } from "@prisma/client";
 
-export default function ChatbotDeleteCard() {
-  const { currentChatbot } = useChatbots();
-  const { Modal, showModal } = useDeleteChatbotModal();
+export default function ChatbotDeleteCard({ chatbot }: { chatbot: Chatbot }) {
+  const { Modal, showModal } = useDeleteChatbotModal(chatbot);
   return (
     <>
       <Card className="border-destructive">
@@ -26,12 +25,7 @@ export default function ChatbotDeleteCard() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button
-            variant="destructive"
-            onClick={
-              currentChatbot ? () => showModal(currentChatbot) : undefined
-            }
-          >
+          <Button variant="destructive" onClick={showModal}>
             Delete Chatbot
           </Button>
         </CardFooter>

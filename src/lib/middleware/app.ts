@@ -25,7 +25,6 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
   }
 
   if (pathKey && !RESURVED_APP_PATH_KEYS.has(pathKey)) {
-    console.log({ pathKey });
     const query = `
     SELECT chatbots.slug from chatbot_users 
     INNER JOIN chatbots ON chatbots.id = chatbot_users.chatbot_id 
@@ -36,8 +35,6 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
       return NextResponse.next();
     }
   }
-
-  console.log({ pathname });
 
   return NextResponse.rewrite(
     new URL(

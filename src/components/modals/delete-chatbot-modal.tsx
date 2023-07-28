@@ -130,12 +130,10 @@ export function DeleteChatbotModal({
   );
 }
 
-export const useDeleteChatbotModal = () => {
-  const [chatbot, setChatbot] = useState<Chatbot | null>(null);
+export const useDeleteChatbotModal = (chatbot: Chatbot) => {
   const [open, setOpen] = useState(false);
 
-  const showModal = useCallback((chatbot: Chatbot) => {
-    setChatbot(chatbot);
+  const showModal = useCallback(() => {
     setOpen(true);
   }, []);
 

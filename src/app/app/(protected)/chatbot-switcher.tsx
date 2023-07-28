@@ -49,7 +49,7 @@ export default function ChatbotSwitcher() {
               className="mr-2 h-6 w-6 rounded-full object-cover"
               alt="Chatbot logo"
             />
-            {currentChatbot?.name || data.user.name}
+            {currentChatbot?.name || data.user.name || "No Name"}
             <ChevronsUpDownIcon size={20} className="ml-2" />
           </Button>
         </DropdownMenuTrigger>
@@ -79,7 +79,7 @@ export default function ChatbotSwitcher() {
           <DropdownMenuGroup>
             <DropdownMenuLabel>My Chabots</DropdownMenuLabel>
             {chatbots.map((item) => (
-              <DropdownMenuItem key={item.slug} asChild>
+              <DropdownMenuItem key={item.id} asChild>
                 <Link href={`/${item.slug}`}>
                   <img
                     src={`/api/avatar/${item.id}`}
@@ -91,7 +91,7 @@ export default function ChatbotSwitcher() {
                     size={20}
                     className={cn("ml-3 opacity-0", {
                       "opacity-100":
-                        currentChatbot && item.slug === currentChatbot.slug,
+                        currentChatbot && item.id === currentChatbot.id,
                     })}
                   />
                 </Link>

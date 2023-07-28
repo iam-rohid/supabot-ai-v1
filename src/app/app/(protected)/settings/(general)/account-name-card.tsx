@@ -24,8 +24,8 @@ import { APP_NAME } from "@/lib/constants";
 import { ApiResponse } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User } from "@prisma/client";
-import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -39,54 +39,41 @@ const schema = z.object({
 });
 type FormData = z.infer<typeof schema>;
 
-const nameUpdateFn = async (data: FormData) => {
-  const res = await fetch("/api/users", {
-    method: "PUT",
-    body: JSON.stringify({ name: data.name }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const body: ApiResponse<User> = await res.json();
-  if (!body.success) {
-    throw body.error;
-  }
-  return body.data;
-};
-
-export default function AccountNameCard({ name }: { name: string }) {
+export default function AccountNameCard({ session }: { session: Session }) {
   const { update } = useSession();
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name,
+      name: session.user.name || undefined,
     },
   });
   const { toast } = useToast();
-  const mutation = useMutation({
-    mutationKey: ["update-account-name"],
-    mutationFn: nameUpdateFn,
-    onMutate: () => {
-      toast({ title: "Updating your name..." });
-    },
-    onSuccess() {
-      update();
-      toast({ title: "Successfully updated your name!" });
-    },
-    onError(error) {
-      toast({
-        title:
-          typeof error === "string" ? error : "Failed to update your name!",
-        variant: "destructive",
-      });
-    },
-  });
 
   const handleSubmit = useCallback(
     async (data: FormData) => {
-      await mutation.mutateAsync(data);
+      try {
+        const res = await fetch("/api/users", {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const resData: ApiResponse<User> = await res.json();
+        if (!resData.success) {
+          throw resData.error;
+        }
+        update();
+        toast({ title: "Successfully updated your name!" });
+      } catch (error) {
+        toast({
+          title:
+            typeof error === "string" ? error : "Failed to update your name!",
+          variant: "destructive",
+        });
+      }
     },
-    [mutation],
+    [toast, update],
   );
 
   return (
