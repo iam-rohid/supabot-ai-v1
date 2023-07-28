@@ -1,10 +1,10 @@
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import Providers from "./providers";
-import { SYSTEM_THEME } from "@/lib/constants";
+import { APP_NAME, SYSTEM_THEME } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "SiteChat AI",
+  title: APP_NAME,
 };
 
 export default function RootLayout({

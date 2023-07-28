@@ -1,7 +1,7 @@
-export const APP_NAME = "SiteChat AI";
+export const APP_NAME = "SupaBot AI";
 
 export const LOCALHOST = "localhost:3000";
-export const DOMAIN = "sitechat-ai.com";
+export const DOMAIN = "supabotai.com";
 
 export const HOME_HOSTNAMES = new Set([LOCALHOST, DOMAIN]);
 export const HOME_DOMAIN =
