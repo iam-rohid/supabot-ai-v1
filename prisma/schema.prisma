@@ -21,10 +21,11 @@ model User {
   emailVerified DateTime? @map("email_verified")
   image         String?
 
-  accounts      Account[]
-  sessions      Session[]
-  role          UserRole             @default(ADMIN)
-  organizations OrganizationMember[]
+  role UserRole @default(ADMIN)
+
+  accounts Account[]
+  sessions Session[]
+  chatbots ChatbotUser[]
 
   @@index([name])
   @@map("users")
@@ -73,54 +74,38 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-model Organization {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  name      String   @db.VarChar(32)
-  slug      String   @unique @db.VarChar(32)
-
-  members  OrganizationMember[]
-  chatbots Chatbot[]
-
-  @@index([name])
-  @@map("organizations")
-}
-
-enum OrganizationRole {
+enum ChatbotUserRole {
   OWNER
   ADMIN
-  EDITOR
-  VIEWER
-}
-
-model OrganizationMember {
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  organizationId String   @map("organization_id")
-  userId         String   @map("user_id")
-
-  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role         OrganizationRole
-
-  @@unique([organizationId, userId])
-  @@index([userId])
-  @@index([organizationId])
-  @@map("organization_members")
+  MEMBER
 }
 
 model Chatbot {
-  id             String   @id @default(cuid())
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  name           String   @db.VarChar(80)
-  description    String?  @db.VarChar(300)
-  organizationId String
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  name        String   @db.VarChar(80)
+  slug        String   @unique @db.VarChar(80)
+  description String?  @db.VarChar(300)
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  users ChatbotUser[]
 
-  @@index([organizationId])
   @@index([name])
   @@map("chatbots")
+}
+
+model ChatbotUser {
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  chatbotId String   @map("chatbot_id")
+  userId    String   @map("user_id")
+
+  role ChatbotUserRole @default(MEMBER)
+
+  chatbot Chatbot @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatbotId, userId])
+  @@index([userId])
+  @@map("chatbot_users")
 }

@@ -24,29 +24,25 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  if (pathname === "/") {
-    const query = `SELECT organizations.slug from organization_members
-INNER JOIN organizations ON organizations.id = organization_members.organization_id
-WHERE organization_members.user_id = ?`;
-    const result = await psDB.execute(query, [sesson?.user?.id]);
-    if (result.rows.length > 0) {
-      const row = result.rows[0] as { slug: string };
-      return NextResponse.redirect(new URL(`/${row.slug}`, req.url));
-    }
-    return NextResponse.redirect(new URL("/new-org", req.url));
-  }
-
-  if (!RESURVED_APP_PATH_KEYS.has(pathKey)) {
-    const query = `SELECT organizations.slug from organization_members
-INNER JOIN organizations ON organizations.id = organization_members.organization_id
-WHERE organization_members.user_id = ? AND organizations.slug = ?`;
+  if (pathKey && !RESURVED_APP_PATH_KEYS.has(pathKey)) {
+    console.log({ pathKey });
+    const query = `
+    SELECT chatbots.slug from chatbot_users 
+    INNER JOIN chatbots ON chatbots.id = chatbot_users.chatbot_id 
+    WHERE chatbot_users.user_id = ? AND chatbots.slug = ?;
+    `;
     const result = await psDB.execute(query, [sesson?.user?.id, pathKey]);
     if (result.size === 0) {
       return NextResponse.next();
     }
   }
 
+  console.log({ pathname });
+
   return NextResponse.rewrite(
-    new URL(`/app${pathname}?${searchParams.toString()}`, req.url),
+    new URL(
+      `/app${pathname === "/" ? "" : pathname}?${searchParams.toString()}`,
+      req.url,
+    ),
   );
 }

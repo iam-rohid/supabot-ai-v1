@@ -53,7 +53,7 @@ export default function UserButton() {
           <img
             src={data.user.image || `/api/avatar/${data.user.id}`}
             className="h-10 w-10 rounded-full object-cover"
-            alt="Organization avatar"
+            alt="User avatar"
           />
         </Button>
       </DropdownMenuTrigger>

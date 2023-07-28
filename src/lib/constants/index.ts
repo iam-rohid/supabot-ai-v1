@@ -23,12 +23,7 @@ export const APP_DOMAIN =
     ? `https://preview.${DOMAIN}`
     : `http://app.${LOCALHOST}`;
 
-export const RESURVED_APP_PATH_KEYS = new Set([
-  "signin",
-  "new-org",
-  "settings",
-  "new",
-]);
+export const RESURVED_APP_PATH_KEYS = new Set(["signin", "settings", "new"]);
 
 export const ADMIN_HOSTNAMES = new Set([
   `admin.${LOCALHOST}`,

@@ -1,6 +1,9 @@
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CreateOrgData, createOrgSchema } from "@/lib/validations/create-org";
+import {
+  CreateChatbotSchemaData,
+  createChatbotSchema,
+} from "@/lib/validations";
 import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,20 +14,20 @@ export const GET = async (req: NextRequest) => {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const organizations = await prisma.organization.findMany({
+  const data = await prisma.chatbot.findMany({
     where: {
-      members: {
+      users: {
         some: {
           userId: session.user.id,
         },
       },
     },
     orderBy: {
-      createdAt: "asc",
+      updatedAt: "asc",
     },
   });
 
-  return NextResponse.json(organizations);
+  return NextResponse.json(data);
 };
 
 export const POST = async (req: NextRequest) => {
@@ -33,18 +36,18 @@ export const POST = async (req: NextRequest) => {
     return new NextResponse("Unauthorized", { status: 401 });
   }
   const body = await req.json();
-  let data: CreateOrgData;
+  let data: CreateChatbotSchemaData;
   try {
-    data = await createOrgSchema.parseAsync(body);
+    data = await createChatbotSchema.parseAsync(body);
   } catch (error) {
     console.log(error);
     throw error;
   }
-
-  const org = await prisma.organization.create({
+  console.log({ data });
+  const chatbot = await prisma.chatbot.create({
     data: {
       ...data,
-      members: {
+      users: {
         create: {
           role: "OWNER",
           user: {
@@ -57,5 +60,5 @@ export const POST = async (req: NextRequest) => {
     },
   });
 
-  return NextResponse.json(org);
+  return NextResponse.json(chatbot);
 };
