@@ -6,22 +6,24 @@ import { prisma } from "./prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { ApiResponse } from "./types";
 import { Chatbot, ChatbotUserRole } from "@prisma/client";
+import { sendEmail } from "./emails";
+import LoginLink from "../../emails/login-email";
+import { APP_NAME } from "./constants";
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
-      sendVerificationRequest({ identifier, url }) {
-        console.log(`Login link: ${url}`);
-        // if (process.env.NODE_ENV === "development") {
-        //   return;
-        // } else {
-        //   sendEmail({
-        //     email: identifier,
-        //     subject: "Your Dub Login Link",
-        //     react: LoginLink({ url, email: identifier }),
-        //   });
-        // }
+      sendVerificationRequest: async ({ identifier, url }) => {
+        if (process.env.NODE_ENV === "development") {
+          console.log(`Login link: ${url}`);
+          return;
+        }
+        await sendEmail({
+          email: identifier,
+          subject: `Your ${APP_NAME} Login Link`,
+          react: LoginLink({ url, email: identifier }),
+        });
       },
     }),
     GithubProvider({
