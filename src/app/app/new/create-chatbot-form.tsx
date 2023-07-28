@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -26,7 +27,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Organization } from "@prisma/client";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function CreateChatBotForm({
@@ -34,77 +35,76 @@ export default function CreateChatBotForm({
   organizations,
 }: {
   organizations: Organization[];
-  organization: Organization;
+  organization: string;
 }) {
   const form = useForm<CreateChatbotSchemaData>({
     resolver: zodResolver(createChatbotSchema),
-    defaultValues: {
-      organizationId: organization.id,
-    },
   });
   const router = useRouter();
-  const currentOrgId = form.watch("organizationId");
 
-  const handleSubmit = useCallback(async (data: CreateChatbotSchemaData) => {
-    try {
-      const res = await fetch("/api/chatbots", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const resData = await res.json();
-      if (!res.ok) {
-        throw res.statusText;
+  const handleSubmit = useCallback(
+    async (data: CreateChatbotSchemaData) => {
+      try {
+        const res = await fetch(`/api/organizations/${organization}/chatbots`, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const resData = await res.json();
+        if (!res.ok) {
+          throw res.statusText;
+        }
+        console.log("SUCCESS", resData);
+        if (resData.id) {
+          router.push(`/${organization}/${resData.id}`);
+        }
+      } catch (error) {
+        console.error("Failed to create chatbot", error);
       }
-      console.log("SUCCESS", resData);
-    } catch (error) {
-      console.error("Failed to create chatbot", error);
-    }
-  }, []);
+    },
+    [organization, router],
+  );
 
-  useEffect(() => {
-    const org = organizations.find((org) => org.id === currentOrgId);
-    if (org && org.id !== organization.id) {
-      console.log("ORG UPDATED");
-      const params = new URLSearchParams({ org: org.slug });
+  // useEffect(() => {
+  //   const org = organizations.find((org) => org.id === organizationId);
+  //   if (org && org.id !== organization.id) {
+  //     console.log("ORG UPDATED");
+  //     const params = new URLSearchParams({ org: org.slug });
+  //     router.push(`/new?${params.toString()}`);
+  //   }
+  // }, [organization.id, organizationId, organizations, router]);
+
+  const handleOrgChange = useCallback(
+    (org: string) => {
+      const params = new URLSearchParams({ org });
       router.push(`/new?${params.toString()}`);
-    }
-  }, [currentOrgId, organization.id, organizations, router]);
+    },
+    [router],
+  );
 
   return (
     <Form {...form}>
       <form className="grid gap-6" onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="flex gap-6">
-          <FormField
-            control={form.control}
-            name="organizationId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Organization</FormLabel>
-                <Select
-                  value={field.value || undefined}
-                  onValueChange={field.onChange}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select a organization" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent align="start" side="bottom">
-                    {organizations.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <fieldset className="grid gap-2">
+            <Label htmlFor="organization">Organization</Label>
+            <Select value={organization} onValueChange={handleOrgChange}>
+              <SelectTrigger id="organization" className="w-[180px]">
+                <SelectValue placeholder="Select a organization" />
+              </SelectTrigger>
+              <SelectContent align="start" side="bottom">
+                {organizations.map((item) => (
+                  <SelectItem key={item.slug} value={item.slug}>
+                    {item.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </fieldset>
+
           <FormField
             control={form.control}
             name="name"

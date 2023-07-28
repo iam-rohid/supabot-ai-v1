@@ -7,7 +7,39 @@ import {
 import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 
-export const POST = async (req: NextRequest) => {
+export const GET = async (
+  req: NextRequest,
+  ctx: { params: { organization: string } },
+) => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const data = await prisma.chatbot.findMany({
+    where: {
+      organization: {
+        slug: ctx.params.organization,
+        members: {
+          some: {
+            userId: session.user.id,
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  return NextResponse.json(data);
+};
+
+export const POST = async (
+  req: NextRequest,
+  ctx: { params: { organization: string } },
+) => {
   const session = await getServerSession(authOptions);
   if (!session) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -22,10 +54,9 @@ export const POST = async (req: NextRequest) => {
     throw error;
   }
 
-  const { organizationId, ...rest } = data;
   const organization = await prisma.organization.findUnique({
     where: {
-      id: organizationId,
+      slug: ctx.params.organization,
       members: {
         some: {
           userId: session.user.id,
@@ -40,7 +71,7 @@ export const POST = async (req: NextRequest) => {
 
   const chatbot = await prisma.chatbot.create({
     data: {
-      ...rest,
+      ...data,
       organization: {
         connect: {
           id: organization.id,

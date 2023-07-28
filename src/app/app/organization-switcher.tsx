@@ -16,12 +16,14 @@ import { useQuery } from "@tanstack/react-query";
 import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
-export default function OrganizationSwitcher() {
+export default function OrganizationSwitcher({
+  organization,
+}: {
+  organization: string;
+}) {
   const { data } = useSession();
-  const { organization } = useParams();
   const domLoaded = useDomLoaded();
 
   const orgsQuery = useQuery<Organization[]>({
@@ -58,11 +60,11 @@ export default function OrganizationSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="-mx-2 px-2">
           <img
-            src={`/api/avatar/${currentOrg?.id}`}
+            src={`/api/avatar/${currentOrg.id}`}
             className="mr-2 h-6 w-6 rounded-full object-cover"
             alt="Organization avatar"
           />
-          {currentOrg?.name}
+          {currentOrg.name}
           <ChevronsUpDownIcon size={20} className="ml-2" />
         </Button>
       </DropdownMenuTrigger>
@@ -79,7 +81,7 @@ export default function OrganizationSwitcher() {
               <CheckIcon
                 size={20}
                 className={cn("ml-3 opacity-0", {
-                  "opacity-100": organization === org.slug,
+                  "opacity-100": org.id === currentOrg.id,
                 })}
               />
             </Link>

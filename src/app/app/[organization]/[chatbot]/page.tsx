@@ -1,3 +1,9 @@
+import TitleBar from "@/components/title-bar";
+
 export default function ChatbotPage() {
-  return <div>ChatbotPage</div>;
+  return (
+    <>
+      <TitleBar title="Overview"></TitleBar>
+    </>
+  );
 }

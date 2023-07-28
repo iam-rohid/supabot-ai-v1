@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
   req: NextRequest,
-  { params: { id } }: { params: { id: string } },
+  ctx: { params: { organization: string } },
 ) => {
   const session = await getServerSession(authOptions);
 
@@ -13,9 +13,9 @@ export const GET = async (
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const organization = await prisma.organization.findUnique({
+  const data = await prisma.organization.findUnique({
     where: {
-      id,
+      slug: ctx.params.organization,
       members: {
         some: {
           userId: session.user.id,
@@ -24,11 +24,11 @@ export const GET = async (
     },
   });
 
-  if (!organization) {
-    return new NextResponse("Not Found", {
+  if (!data) {
+    return new NextResponse("Organization not found", {
       status: 404,
     });
   }
 
-  return NextResponse.json(organization);
+  return NextResponse.json(data);
 };

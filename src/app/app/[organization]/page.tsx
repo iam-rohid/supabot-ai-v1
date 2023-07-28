@@ -18,7 +18,7 @@ export default function AppPage({
 }) {
   return (
     <>
-      <TitleBar title="Chatbots">
+      <TitleBar title="Overview">
         <Button asChild>
           <Link href={`/new?org=${organization}`}>
             <PlusIcon size={20} className="-ml-1 mr-2" />
@@ -26,7 +26,7 @@ export default function AppPage({
           </Link>
         </Button>
       </TitleBar>
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense>
         <ChatbotsList organization={organization} />
       </Suspense>
     </>

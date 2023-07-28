@@ -1,17 +1,9 @@
-import { APP_NAME } from "@/lib/constants";
-import { Metadata } from "next";
-import Link from "next/link";
-import Nav from "./nav";
-import OrganizationSwitcher from "./organization-switcher";
-import { Button } from "@/components/ui/button";
-import ThemeSwitcher from "@/components/theme-switcher";
-import UserButton from "@/components/user-button";
+"use client";
 
-export const metadata: Metadata = {
-  title: APP_NAME,
-};
+import { useEffect } from "react";
+import { useAppHeader } from "../app-header";
 
-export default async function OrganizationLayout({
+export default function OrganizationLayout({
   children,
   params: { organization },
 }: {
@@ -20,25 +12,14 @@ export default async function OrganizationLayout({
     organization: string;
   };
 }) {
-  return (
-    <div className="flex min-h-screen flex-col bg-muted">
-      <header className="border-b bg-card text-card-foreground">
-        <div className="container flex h-16 items-center justify-between">
-          <Button variant="ghost" size="icon" className="rounded-full" asChild>
-            <Link href={`/${organization}`}>
-              <div className="h-10 w-10 rounded-full bg-accent-foreground" />
-            </Link>
-          </Button>
-          <span className="mx-4 text-2xl text-muted-foreground/50">/</span>
-          <OrganizationSwitcher />
-          <div className="flex flex-1 items-center justify-end gap-4">
-            <ThemeSwitcher />
-            <UserButton />
-          </div>
-        </div>
-        <Nav />
-      </header>
-      {children}
-    </div>
-  );
+  const { setOrganization } = useAppHeader();
+
+  useEffect(() => {
+    setOrganization(organization);
+    return () => {
+      setOrganization(null);
+    };
+  }, [organization, setOrganization]);
+
+  return <>{children}</>;
 }

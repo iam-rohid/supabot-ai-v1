@@ -29,11 +29,10 @@ export default async function NewChatbotPage({
     organization = organizations.find((org) => org.slug == searchParams.org);
   }
 
-  if (!organization) {
+  if (!organization || !searchParams.org) {
     const params = new URLSearchParams({ org: organizations[0].slug });
     redirect(`/new?${params.toString()}`);
   }
-  console.log(organization.id);
 
   return (
     <div className="container flex flex-col py-8">
@@ -44,7 +43,7 @@ export default async function NewChatbotPage({
       </div>
       <CreateChatBotForm
         organizations={organizations}
-        organization={organization}
+        organization={searchParams.org}
       />
     </div>
   );
