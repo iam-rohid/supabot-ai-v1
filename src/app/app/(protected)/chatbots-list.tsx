@@ -1,6 +1,7 @@
 "use client";
 
 import { useChatbots } from "@/components/chatbots-provider";
+import { useCreateChatbotModal } from "@/components/modals/create-chatbot-modal";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,7 +16,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function ChatbotsList() {
-  const { chatbots, isLoading, createChatbot } = useChatbots();
+  const { chatbots, isLoading } = useChatbots();
+  const { Modal: CreateChatBotModal, showModal: createChatbot } =
+    useCreateChatbotModal();
 
   return (
     <div className="container py-8">
@@ -67,6 +70,8 @@ export default function ChatbotsList() {
           </CardFooter>
         </Card>
       )}
+
+      <CreateChatBotModal />
     </div>
   );
 }

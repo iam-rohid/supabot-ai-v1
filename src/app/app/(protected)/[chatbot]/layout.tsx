@@ -1,7 +1,7 @@
 "use client";
 
 import { useChatbots } from "@/components/chatbots-provider";
-import { ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 
 export default function ChatbotLayout({
   children,
