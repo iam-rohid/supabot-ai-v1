@@ -1,22 +1,23 @@
-import { prisma } from "@/lib/prisma";
 import type { ApiResponse } from "@/lib/types";
-import type { User } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { withAuth } from "../utilts";
+import { db } from "@/lib/drizzle";
+import { type User, usersTable } from "@/lib/schema/users";
+import { and, eq } from "drizzle-orm";
+import { chatbotUsersTable } from "@/lib/schema/chatbot-users";
 
-export const PUT = withAuth(async (req, ctx, { session }) => {
+export const PUT = withAuth(async (req, ctx) => {
   try {
     const { name, email, image } = await req.json();
-    const user = await prisma.user.update({
-      where: {
-        id: session.user.id,
-      },
-      data: {
+    const [user] = await db
+      .update(usersTable)
+      .set({
         ...(typeof name === "string" && name.length > 0 ? { name } : {}),
         ...(typeof email === "string" && email.length > 0 ? { email } : {}),
         ...(typeof image === "string" && image.length > 0 ? { image } : {}),
-      },
-    });
+      })
+      .where(eq(usersTable.id, ctx.session.user.id))
+      .returning();
     return NextResponse.json({
       success: true,
       message: "User update success",
@@ -42,12 +43,18 @@ export const PUT = withAuth(async (req, ctx, { session }) => {
   }
 });
 
-export const DELETE = withAuth(async (req, ctx, { session }) => {
-  const ownerOfChatbots = await prisma.chatbotUser.findMany({
-    where: { userId: session.user.id, role: "OWNER" },
-  });
+export const DELETE = withAuth(async (req, ctx) => {
+  const ownerOfChatbots = await db
+    .select()
+    .from(chatbotUsersTable)
+    .where(
+      and(
+        eq(chatbotUsersTable.userId, ctx.session.user.id),
+        eq(chatbotUsersTable.role, "owner"),
+      ),
+    );
 
-  if (ownerOfChatbots.length > 0) {
+  if (ownerOfChatbots.length) {
     return NextResponse.json({
       success: false,
       error:
@@ -56,11 +63,10 @@ export const DELETE = withAuth(async (req, ctx, { session }) => {
   }
 
   try {
-    const user = await prisma.user.delete({
-      where: {
-        id: session.user.id,
-      },
-    });
+    const [user] = await db
+      .delete(usersTable)
+      .where(eq(usersTable.id, ctx.session.user.id))
+      .returning();
     return NextResponse.json({
       success: true,
       message: "User has been deleted",

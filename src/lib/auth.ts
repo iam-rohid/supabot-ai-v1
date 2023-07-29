@@ -1,14 +1,16 @@
 import { type AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "./prisma";
 import { sendEmail } from "./emails";
 import LoginLink from "../../emails/login-email";
 import { APP_NAME } from "./constants";
+import { db } from "./drizzle";
+import { usersTable } from "./schema/users";
+import { eq } from "drizzle-orm";
+import { drizzleAdapter } from "./drizzle-adapter";
 
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: drizzleAdapter,
   providers: [
     EmailProvider({
       sendVerificationRequest: async ({ identifier, url }) => {
@@ -42,12 +44,11 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.user = user;
       }
-      if (trigger === "update") {
-        const refreshedUser = await prisma.user.findUnique({
-          where: {
-            id: token.sub,
-          },
-        });
+      if (trigger === "update" && token.sub) {
+        const [refreshedUser] = await db
+          .select()
+          .from(usersTable)
+          .where(eq(usersTable.id, token.sub));
         token.user = refreshedUser;
         token.email = refreshedUser?.email;
         token.name = refreshedUser?.name;
@@ -57,7 +58,6 @@ export const authOptions: AuthOptions = {
     },
     session: async ({ session, token }) => {
       session.user = {
-        id: token.sub,
         ...token.user,
         ...session.user,
       };
@@ -68,23 +68,17 @@ export const authOptions: AuthOptions = {
         return false;
       }
       if (account?.provider === "github") {
-        const userExist = await prisma.user.findUnique({
-          where: {
-            email: user.email,
-          },
-          select: {
-            name: true,
-          },
-        });
+        const [userExist] = await db
+          .select({ name: usersTable.name })
+          .from(usersTable)
+          .where(eq(usersTable.email, user.email));
         if (userExist && !userExist.name && profile?.name) {
-          await prisma.user.update({
-            where: {
-              email: user.email,
-            },
-            data: {
+          await db
+            .update(usersTable)
+            .set({
               name: profile.name,
-            },
-          });
+            })
+            .where(eq(usersTable.email, user.email));
         }
       }
       return true;

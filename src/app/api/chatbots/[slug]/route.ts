@@ -1,47 +1,36 @@
-import { prisma } from "@/lib/prisma";
 import type { ApiResponse } from "@/lib/types";
-import type { Chatbot } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { withChatbot } from "./utils";
+import { Chatbot, chatbotsTable } from "@/lib/schema/chatbots";
+import { db } from "@/lib/drizzle";
+import { eq } from "drizzle-orm";
 
-export const GET = withChatbot(async (req, ctx, { chatbot }) => {
+export const GET = withChatbot(async (req, ctx) => {
   return NextResponse.json({
     success: true,
-    data: chatbot,
+    data: ctx.chatbot,
   } satisfies ApiResponse<Chatbot>);
 });
 
 export const PUT = withChatbot(
-  async (req, ctx, { chatbot }) => {
+  async (req, ctx) => {
     const { name, slug, description } = await req.json();
     try {
-      const updatedChatbot = await prisma.chatbot.update({
-        where: {
-          id: chatbot.id,
-        },
-        data: {
-          ...(typeof name === "string" && name.length > 0 ? { name } : {}),
-          ...(typeof slug === "string" && slug.length > 0 ? { slug } : {}),
-          ...(typeof description === "string" && description.length > 0
-            ? { description }
-            : {}),
-        },
-      });
+      const [chatbot] = await db
+        .update(chatbotsTable)
+        .set({
+          ...(typeof name === "string" ? { name } : {}),
+          ...(typeof slug === "string" ? { slug } : {}),
+          ...(typeof description === "string" ? { description } : {}),
+        })
+        .where(eq(chatbotsTable.slug, ctx.params.slug))
+        .returning();
       return NextResponse.json({
         success: true,
         message: "Chatbot updated!",
-        data: updatedChatbot,
+        data: chatbot,
       } satisfies ApiResponse<Chatbot>);
     } catch (error: any) {
-      if (error.code === "P2002") {
-        return NextResponse.json(
-          {
-            success: false,
-            error: "Chatbot slug already exists.",
-          } satisfies ApiResponse,
-          { status: 422 },
-        );
-      }
       return NextResponse.json(
         {
           success: false,
@@ -51,21 +40,20 @@ export const PUT = withChatbot(
       );
     }
   },
-  { requireRoles: ["OWNER", "ADMIN"] },
+  { requireRoles: ["owner", "admin"] },
 );
 
 export const DELETE = withChatbot(
-  async (req, ctx, { chatbot }) => {
+  async (req, ctx) => {
     try {
-      const deletedChatbot = await prisma.chatbot.delete({
-        where: {
-          id: chatbot.id,
-        },
-      });
+      const [chatbot] = await db
+        .delete(chatbotsTable)
+        .where(eq(chatbotsTable.slug, ctx.params.slug))
+        .returning();
       return NextResponse.json({
         success: true,
         message: "Chatbot deleted!",
-        data: deletedChatbot,
+        data: chatbot,
       } satisfies ApiResponse<Chatbot>);
     } catch (error) {
       return NextResponse.json(
@@ -77,5 +65,5 @@ export const DELETE = withChatbot(
       );
     }
   },
-  { requireRoles: ["OWNER"] },
+  { requireRoles: ["owner"] },
 );

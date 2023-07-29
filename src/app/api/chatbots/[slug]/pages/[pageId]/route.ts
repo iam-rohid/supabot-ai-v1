@@ -1,11 +1,11 @@
 import type { ApiResponse } from "@/lib/types";
-import type { Page } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { withPage } from "./utils";
+import { Page } from "@/lib/schema/pages";
 
-export const GET = withPage(async (req, ctx, props) => {
+export const GET = withPage(async (req, ctx) => {
   return NextResponse.json({
     success: true,
-    data: props.page,
+    data: ctx.page,
   } satisfies ApiResponse<Page>);
 });

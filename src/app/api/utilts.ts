@@ -4,11 +4,12 @@ import { type Session, getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface BaseRequestHandler<C, P> {
-  (req: NextRequest, ctx: C, props: P): any;
+  (req: NextRequest, ctx: C): any;
 }
 
 export type WithAuthContext = {
   params: {};
+  session: Session;
 };
 export type WithAuthHandlerProps = { session: Session };
 export type WithAuthProps = {};
@@ -26,5 +27,6 @@ export const withAuth =
         error: "Unauthorized",
       } satisfies ApiResponse);
     }
-    return handler(req, ctx, { session });
+    ctx.session = session;
+    return handler(req, ctx);
   };

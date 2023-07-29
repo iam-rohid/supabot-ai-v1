@@ -1,55 +1,57 @@
-import { prisma } from "@/lib/prisma";
 import { ApiResponse } from "@/lib/types";
-import { Chatbot, ChatbotUserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 import {
   type WithAuthHandlerProps,
   type WithAuthProps,
   type BaseRequestHandler,
   withAuth,
+  WithAuthContext,
 } from "../../utilts";
+import { Chatbot, chatbotsTable } from "@/lib/schema/chatbots";
+import { ChatbotUser, chatbotUsersTable } from "@/lib/schema/chatbot-users";
+import { db } from "@/lib/drizzle";
+import { and, eq } from "drizzle-orm";
 
 export type WithChatbotContext = {
   params: {
     slug: string;
   };
-};
-export type WithChatbotHandlerProps = WithAuthHandlerProps & {
   chatbot: Chatbot;
-  role: ChatbotUserRole;
-};
+} & WithAuthContext;
+
+export type WithChatbotHandlerProps = WithAuthHandlerProps & {};
 export type WithChatProps = WithAuthProps & {
-  requireRoles?: ChatbotUserRole[];
+  requireRoles?: ChatbotUser["role"][];
 };
 
 export const withChatbot = <C extends WithChatbotContext>(
   handler: BaseRequestHandler<C, WithChatbotHandlerProps>,
   extraProps: WithChatProps = {},
 ) =>
-  withAuth<C>(async (req, ctx, props) => {
-    const chatbot = await prisma.chatbot.findUnique({
-      where: {
-        slug: ctx.params.slug,
-      },
-      select: {
-        id: true,
-        createdAt: true,
-        name: true,
-        description: true,
-        slug: true,
-        updatedAt: true,
-        users: {
-          where: {
-            userId: props.session.user.id,
-          },
-          select: {
-            role: true,
-          },
-        },
-      },
-    });
+  withAuth<C>(async (req, ctx) => {
+    const [chatbot] = await db
+      .select({
+        id: chatbotsTable.id,
+        createdAt: chatbotsTable.createdAt,
+        updatedAt: chatbotsTable.updatedAt,
+        name: chatbotsTable.name,
+        slug: chatbotsTable.slug,
+        description: chatbotsTable.description,
+        role: chatbotUsersTable.role,
+      })
+      .from(chatbotsTable)
+      .innerJoin(
+        chatbotUsersTable,
+        eq(chatbotUsersTable.chatbotId, chatbotsTable.id),
+      )
+      .where(
+        and(
+          eq(chatbotsTable.slug, ctx.params.slug),
+          eq(chatbotUsersTable.userId, ctx.session.user.id),
+        ),
+      );
 
-    if (!chatbot || chatbot.users.length === 0) {
+    if (!chatbot) {
       return NextResponse.json({
         success: false,
         error: "Chatbot not found!",
@@ -59,7 +61,7 @@ export const withChatbot = <C extends WithChatbotContext>(
     if (
       extraProps.requireRoles &&
       extraProps.requireRoles.length > 0 &&
-      !new Set(extraProps.requireRoles).has(chatbot.users[0].role)
+      !new Set(extraProps.requireRoles).has(chatbot.role)
     ) {
       return NextResponse.json({
         success: false,
@@ -67,9 +69,7 @@ export const withChatbot = <C extends WithChatbotContext>(
       } satisfies ApiResponse);
     }
 
-    return handler(req, ctx, {
-      ...props,
-      chatbot,
-      role: chatbot.users[0].role,
-    });
+    ctx.chatbot = chatbot;
+
+    return handler(req, ctx);
   });

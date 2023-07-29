@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import type { ApiResponse } from "@/lib/types";
-import type { Chatbot } from "@prisma/client";
+import { Chatbot } from "@/lib/schema/chatbots";
 
 export type ChatbotsContextType = {
   chatbots: Chatbot[];

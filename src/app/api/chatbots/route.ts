@@ -1,31 +1,36 @@
-import { prisma } from "@/lib/prisma";
 import type { ApiResponse } from "@/lib/types";
 import {
   CreateChatbotSchemaData,
   createChatbotSchema,
 } from "@/lib/validations";
-import type { Chatbot } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { withAuth } from "../utilts";
+import { Chatbot, chatbotsTable } from "@/lib/schema/chatbots";
+import { db } from "@/lib/drizzle";
+import { chatbotUsersTable } from "@/lib/schema/chatbot-users";
+import { eq } from "drizzle-orm";
 
-export const GET = withAuth(async (req, ctx, { session }) => {
+export const GET = withAuth(async (req, ctx) => {
   try {
-    const data = await prisma.chatbot.findMany({
-      where: {
-        users: {
-          some: {
-            userId: session.user.id,
-          },
-        },
-      },
-      orderBy: {
-        updatedAt: "asc",
-      },
-    });
+    const chatbots = await db
+      .select({
+        id: chatbotsTable.id,
+        createdAt: chatbotsTable.createdAt,
+        updatedAt: chatbotsTable.updatedAt,
+        name: chatbotsTable.name,
+        slug: chatbotsTable.slug,
+        description: chatbotsTable.description,
+      })
+      .from(chatbotUsersTable)
+      .innerJoin(
+        chatbotsTable,
+        eq(chatbotsTable.id, chatbotUsersTable.chatbotId),
+      )
+      .where(eq(chatbotUsersTable.userId, ctx.session.user.id));
 
     return NextResponse.json({
       success: true,
-      data,
+      data: chatbots,
     } satisfies ApiResponse<Chatbot[]>);
   } catch (error) {
     return NextResponse.json({
@@ -35,7 +40,7 @@ export const GET = withAuth(async (req, ctx, { session }) => {
   }
 });
 
-export const POST = withAuth(async (req, ctx, { session }) => {
+export const POST = withAuth(async (req, ctx) => {
   const body = await req.json();
 
   let data: CreateChatbotSchemaData;
@@ -52,20 +57,11 @@ export const POST = withAuth(async (req, ctx, { session }) => {
   }
 
   try {
-    const chatbot = await prisma.chatbot.create({
-      data: {
-        ...data,
-        users: {
-          create: {
-            role: "OWNER",
-            user: {
-              connect: {
-                id: session.user.id,
-              },
-            },
-          },
-        },
-      },
+    const [chatbot] = await db.insert(chatbotsTable).values(data).returning();
+    await db.insert(chatbotUsersTable).values({
+      chatbotId: chatbot.id,
+      userId: ctx.session.user.id,
+      role: "owner",
     });
 
     return NextResponse.json({

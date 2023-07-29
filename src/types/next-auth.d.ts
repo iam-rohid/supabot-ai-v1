@@ -8,11 +8,11 @@ declare module "next-auth" {
   interface Session {
     user: {
       /** The user's postal address. */
-      id?: string;
+      id: string;
     } & DefaultSession["user"];
   }
-  interface JWT {
-    user: User;
+  interface User {
+    role: "admin" | "user" | null | undefined;
   }
 }
 

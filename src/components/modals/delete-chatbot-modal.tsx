@@ -15,8 +15,8 @@ import { Input } from "../ui/input";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
-import type { Chatbot } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { Chatbot } from "@/lib/schema/chatbots";
 
 const deleteChatbotFn = async (slug: string) => {
   const res = await fetch(`/api/chatbots/${slug}`, {

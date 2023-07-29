@@ -15,8 +15,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/drizzle";
+import { chatbotsTable } from "@/lib/schema/chatbots";
+import { pagesTable } from "@/lib/schema/pages";
 import { formatDistanceToNow } from "date-fns";
+import { eq } from "drizzle-orm";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 
@@ -25,13 +28,17 @@ export default async function PagesPage({
 }: {
   params: { chatbot: string };
 }) {
-  const pages = await prisma.page.findMany({
-    where: {
-      chatbot: {
-        slug: params.chatbot,
-      },
-    },
-  });
+  const pages = await db
+    .select({
+      id: pagesTable.id,
+      lastTrainedAt: pagesTable.lastTrainedAt,
+      url: pagesTable.url,
+      trainingStatus: pagesTable.trainingStatus,
+    })
+    .from(pagesTable)
+    .innerJoin(chatbotsTable, eq(chatbotsTable.id, pagesTable.chatbotId))
+    .where(eq(chatbotsTable.slug, params.chatbot));
+
   return (
     <>
       <TitleBar title="Pages">
@@ -53,9 +60,11 @@ export default async function PagesPage({
               {pages.map((page) => (
                 <TableRow key={page.id}>
                   <TableCell>{page.url}</TableCell>
-                  <TableCell>Trained</TableCell>
+                  <TableCell>{page.trainingStatus.toUpperCase()}</TableCell>
                   <TableCell>
-                    {formatDistanceToNow(new Date(page.updatedAt))}
+                    {page.lastTrainedAt
+                      ? formatDistanceToNow(new Date(page.lastTrainedAt))
+                      : "-"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>

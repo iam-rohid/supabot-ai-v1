@@ -1,19 +1,19 @@
 import ChatbotNameCard from "./chatbot-name-card";
 import ChatbotSlugCard from "./chatbot-slug-card";
 import ChatbotDeleteCard from "./chatbot-delete-card";
-import { prisma } from "@/lib/prisma";
-import type { Chatbot } from "@prisma/client";
+import { db } from "@/lib/drizzle";
+import { chatbotsTable } from "@/lib/schema/chatbots";
+import { eq } from "drizzle-orm";
 
 export default async function ChatbotSettingsPage({
   params,
 }: {
   params: { chatbot: string };
 }) {
-  const chatbot = (await prisma.chatbot.findFirst({
-    where: {
-      slug: params.chatbot,
-    },
-  })) as Chatbot;
+  const [chatbot] = await db
+    .select()
+    .from(chatbotsTable)
+    .where(eq(chatbotsTable.slug, params.chatbot));
 
   return (
     <div className="grid gap-8">

@@ -2,7 +2,7 @@ import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { parseReq } from "./utils";
 import { getToken } from "next-auth/jwt";
 import { AUTH_PATHNAMES, RESURVED_APP_PATH_KEYS } from "../constants";
-import { psDB } from "../planetscale";
+import { neonDb } from "../neon";
 
 export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
   const { pathname, pathKey, searchParams } = parseReq(req);
@@ -28,10 +28,11 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
     const query = `
     SELECT chatbots.slug from chatbot_users 
     INNER JOIN chatbots ON chatbots.id = chatbot_users.chatbot_id 
-    WHERE chatbot_users.user_id = ? AND chatbots.slug = ?;
+    WHERE chatbot_users.user_id = $1 AND chatbots.slug = $2;
     `;
-    const result = await psDB.execute(query, [sesson?.user?.id, pathKey]);
-    if (result.size === 0) {
+    const rows = await neonDb(query, [sesson?.user?.id, pathKey]);
+    console.log(JSON.stringify(rows, null, 2));
+    if (!rows.length) {
       return NextResponse.next();
     }
   }

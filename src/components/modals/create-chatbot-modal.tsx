@@ -24,10 +24,10 @@ import { useCallback, useMemo, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import type { ApiResponse } from "@/lib/types";
-import type { Chatbot } from "@prisma/client";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { Chatbot } from "@/lib/schema/chatbots";
 
 const createChatbotFn = async (data: CreateChatbotSchemaData) => {
   const res = await fetch("/api/chatbots", {

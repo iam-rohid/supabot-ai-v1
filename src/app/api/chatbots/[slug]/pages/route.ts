@@ -1,23 +1,26 @@
 import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import {
   generateEmbeddingFromSections,
   htmlToMarkdown,
   splitMarkdownBySections,
 } from "./utils";
-import type { Page } from "@prisma/client";
 import { withChatbot } from "../utils";
+import { db } from "@/lib/drizzle";
+import { Page, pagesTable } from "@/lib/schema/pages";
+import { and, eq } from "drizzle-orm";
+import { pageSectionsTable } from "@/lib/schema/page_sections";
 
 export const config = {
   runtime: "edge",
 };
 
-export const GET = withChatbot(async (req, ctx, { chatbot }) => {
+export const GET = withChatbot(async (req, ctx) => {
   try {
-    const pages = await prisma.page.findMany({
-      where: { chatbotId: chatbot.id },
-    });
+    const pages = await db
+      .select()
+      .from(pagesTable)
+      .where(eq(pagesTable.chatbotId, ctx.chatbot.id));
     return NextResponse.json({
       success: true,
       data: pages,
@@ -33,7 +36,7 @@ export const GET = withChatbot(async (req, ctx, { chatbot }) => {
   }
 });
 
-export const POST = withChatbot(async (req, ctx, { chatbot }) => {
+export const POST = withChatbot(async (req, ctx) => {
   const { url } = await req.json();
   if (!url || typeof url !== "string" || url.length === 0) {
     return NextResponse.json(
@@ -45,12 +48,14 @@ export const POST = withChatbot(async (req, ctx, { chatbot }) => {
     );
   }
   try {
-    const alreadyExists = await prisma.page.findUnique({
-      where: { chatbotId_url: { url, chatbotId: chatbot.id } },
-      select: { id: true },
-    });
+    const alreadyExists = await db
+      .select({ id: pagesTable.id })
+      .from(pagesTable)
+      .where(
+        and(eq(pagesTable.chatbotId, ctx.chatbot.id), eq(pagesTable.url, url)),
+      );
 
-    if (alreadyExists) {
+    if (alreadyExists.length) {
       return NextResponse.json(
         {
           success: false,
@@ -76,27 +81,71 @@ export const POST = withChatbot(async (req, ctx, { chatbot }) => {
     }
 
     const { markdown, metadata } = htmlToMarkdown(html);
-    const sections = splitMarkdownBySections(markdown);
-    const sectionsWithEmbedding = await generateEmbeddingFromSections(sections);
-
-    const page = await prisma.page.create({
-      data: {
+    const [page] = await db
+      .insert(pagesTable)
+      .values({
         url,
+        chatbotId: ctx.chatbot.id,
+        trainingStatus: "training",
         metadata,
-        chatbotId: chatbot.id,
-        sections: {
-          createMany: {
-            data: sectionsWithEmbedding,
-          },
-        },
-      },
-    });
+      })
+      .returning({ id: pagesTable.id });
 
-    return NextResponse.json({
-      success: true,
-      message: "Page fetch success!",
-      data: page,
-    } satisfies ApiResponse<any>);
+    try {
+      const sections = splitMarkdownBySections(markdown);
+      console.log("SECTIONS ARE SEPERATED");
+      const sectionsWithEmbedding = await generateEmbeddingFromSections(
+        sections,
+      );
+      console.log("SECTION EMBEDDINGS ARE GENERATED");
+      console.log(JSON.stringify(sectionsWithEmbedding, null, 2))
+      await Promise.all(
+        sectionsWithEmbedding.map((section) =>
+          db.insert(pageSectionsTable).values({
+            pageId: page.id,
+            content: section.content,
+            embedding: section.embedding,
+            tokenCount: section.tokenCount,
+            metadata: {
+              ...section.metadata,
+            },
+          }),
+        ),
+      );
+      console.log("SECTIONS ARE PUSHED TO DATABASE");
+
+      const [updatedPage] = await db
+        .update(pagesTable)
+        .set({
+          trainingStatus: "trained",
+          lastTrainedAt: new Date(Date.now()),
+        })
+        .where(eq(pagesTable.id, page.id))
+        .returning();
+
+      console.log("UPDATED PAGE STATUS");
+
+      return NextResponse.json({
+        success: true,
+        message: "Page training success!",
+        data: updatedPage,
+      } satisfies ApiResponse<Page>);
+    } catch (error) {
+      console.log("FAILED", error);
+      const [updatedPage] = await db
+        .update(pagesTable)
+        .set({
+          trainingStatus: "failed",
+          lastTrainedAt: new Date(Date.now()),
+        })
+        .where(eq(pagesTable.id, page.id))
+        .returning();
+      return NextResponse.json({
+        success: true,
+        message: "Page training failed!",
+        data: updatedPage,
+      } satisfies ApiResponse<Page>);
+    }
   } catch (error) {
     console.log(error);
     return NextResponse.json(

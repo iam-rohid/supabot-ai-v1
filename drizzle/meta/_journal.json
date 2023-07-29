@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1690654148409,
+      "tag": "0000_chilly_red_wolf",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1690654863655,
+      "tag": "0001_gifted_lenny_balinger",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1690656123330,
+      "tag": "0002_unknown_arachne",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1690662764510,
+      "tag": "0003_special_lorna_dane",
+      "breakpoints": true
+    }
+  ]
+}
