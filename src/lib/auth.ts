@@ -1,11 +1,8 @@
-import { AuthOptions, Session, getServerSession } from "next-auth";
+import { type AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./prisma";
-import { NextRequest, NextResponse } from "next/server";
-import { ApiResponse } from "./types";
-import { Chatbot, ChatbotUserRole } from "@prisma/client";
 import { sendEmail } from "./emails";
 import LoginLink from "../../emails/login-email";
 import { APP_NAME } from "./constants";
@@ -101,88 +98,3 @@ export const authOptions: AuthOptions = {
     },
   },
 };
-
-export interface WithAuthHandler {
-  (req: NextRequest, props: { session: Session }): any;
-}
-
-export const withAuth =
-  (handler: WithAuthHandler) => async (req: NextRequest) => {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({
-        success: false,
-        error: "Unauthorized",
-      } satisfies ApiResponse);
-    }
-    return handler(req, { session });
-  };
-
-export interface WithChatbotHandler {
-  (
-    req: NextRequest,
-    props: { session: Session; chatbot: Chatbot; role: ChatbotUserRole },
-  ): any;
-}
-
-export const withChatbot =
-  (
-    handler: WithChatbotHandler,
-    {
-      requireRoles,
-    }: {
-      requireRoles?: ChatbotUserRole[];
-    } = {},
-  ) =>
-  async (req: NextRequest, ctx: { params: { slug: string } }) => {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return NextResponse.json({
-        success: false,
-        error: "Unauthorized",
-      } satisfies ApiResponse);
-    }
-
-    const chatbot = await prisma.chatbot.findUnique({
-      where: {
-        slug: ctx.params.slug,
-      },
-      select: {
-        id: true,
-        createdAt: true,
-        name: true,
-        description: true,
-        slug: true,
-        updatedAt: true,
-        users: {
-          where: {
-            userId: session.user.id,
-          },
-          select: {
-            role: true,
-          },
-        },
-      },
-    });
-
-    if (!chatbot || chatbot.users.length === 0) {
-      return NextResponse.json({
-        success: false,
-        error: "Chatbot not found!",
-      } satisfies ApiResponse);
-    }
-
-    if (
-      requireRoles &&
-      requireRoles.length > 0 &&
-      !new Set(requireRoles).has(chatbot.users[0].role)
-    ) {
-      return NextResponse.json({
-        success: false,
-        error: "You don't have access!",
-      } satisfies ApiResponse);
-    }
-
-    return handler(req, { chatbot, session, role: chatbot.users[0].role });
-  };

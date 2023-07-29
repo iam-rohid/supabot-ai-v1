@@ -23,7 +23,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { APP_NAME } from "@/lib/constants";
 import { ApiResponse } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useCallback } from "react";

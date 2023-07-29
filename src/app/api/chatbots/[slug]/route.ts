@@ -1,10 +1,10 @@
-import { withChatbot } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ApiResponse } from "@/lib/types";
-import { Chatbot } from "@prisma/client";
+import type { ApiResponse } from "@/lib/types";
+import type { Chatbot } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { withChatbot } from "./utils";
 
-export const GET = withChatbot(async (_, { chatbot }) => {
+export const GET = withChatbot(async (req, ctx, { chatbot }) => {
   return NextResponse.json({
     success: true,
     data: chatbot,
@@ -12,7 +12,7 @@ export const GET = withChatbot(async (_, { chatbot }) => {
 });
 
 export const PUT = withChatbot(
-  async (req, { chatbot }) => {
+  async (req, ctx, { chatbot }) => {
     const { name, slug, description } = await req.json();
     try {
       const updatedChatbot = await prisma.chatbot.update({
@@ -55,7 +55,7 @@ export const PUT = withChatbot(
 );
 
 export const DELETE = withChatbot(
-  async (_, { chatbot }) => {
+  async (req, ctx, { chatbot }) => {
     try {
       const deletedChatbot = await prisma.chatbot.delete({
         where: {

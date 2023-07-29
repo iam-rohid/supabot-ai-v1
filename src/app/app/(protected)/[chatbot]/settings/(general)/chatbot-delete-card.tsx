@@ -10,7 +10,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { APP_NAME } from "@/lib/constants";
-import { Chatbot } from "@prisma/client";
+import type { Chatbot } from "@prisma/client";
 
 export default function ChatbotDeleteCard({ chatbot }: { chatbot: Chatbot }) {
   const { Modal, showModal } = useDeleteChatbotModal(chatbot);

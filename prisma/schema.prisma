@@ -89,6 +89,7 @@ model Chatbot {
   description String?  @db.VarChar(300)
 
   users ChatbotUser[]
+  pages Page[]
 
   @@index([name])
   @@map("chatbots")
@@ -108,4 +109,36 @@ model ChatbotUser {
   @@unique([chatbotId, userId])
   @@index([userId])
   @@map("chatbot_users")
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  url       String   @db.VarChar(500)
+  chatbotId String   @map("chatbot_id")
+  metadata  Json?
+
+  chatbot  Chatbot       @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  sections PageSection[]
+
+  @@unique([chatbotId, url])
+  @@index([chatbotId])
+  @@map("pages")
+}
+
+model PageSection {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  content    String   @db.Text
+  embedding  Json     @db.Json
+  tokenCount Int      @map("token_count") @db.UnsignedSmallInt
+  metadata   Json?
+  pageId     String   @map("page_id")
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId])
+  @@map("page_sections")
 }

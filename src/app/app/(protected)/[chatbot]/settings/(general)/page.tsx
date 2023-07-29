@@ -2,7 +2,7 @@ import ChatbotNameCard from "./chatbot-name-card";
 import ChatbotSlugCard from "./chatbot-slug-card";
 import ChatbotDeleteCard from "./chatbot-delete-card";
 import { prisma } from "@/lib/prisma";
-import { Chatbot } from "@prisma/client";
+import type { Chatbot } from "@prisma/client";
 
 export default async function ChatbotSettingsPage({
   params,

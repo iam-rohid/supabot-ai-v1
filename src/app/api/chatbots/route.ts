@@ -1,14 +1,14 @@
-import { withAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ApiResponse } from "@/lib/types";
+import type { ApiResponse } from "@/lib/types";
 import {
   CreateChatbotSchemaData,
   createChatbotSchema,
 } from "@/lib/validations";
-import { Chatbot } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import type { Chatbot } from "@prisma/client";
+import { NextResponse } from "next/server";
+import { withAuth } from "../utilts";
 
-export const GET = withAuth(async (_: NextRequest, { session }) => {
+export const GET = withAuth(async (req, ctx, { session }) => {
   try {
     const data = await prisma.chatbot.findMany({
       where: {
@@ -35,7 +35,7 @@ export const GET = withAuth(async (_: NextRequest, { session }) => {
   }
 });
 
-export const POST = withAuth(async (req: NextRequest, { session }) => {
+export const POST = withAuth(async (req, ctx, { session }) => {
   const body = await req.json();
 
   let data: CreateChatbotSchemaData;

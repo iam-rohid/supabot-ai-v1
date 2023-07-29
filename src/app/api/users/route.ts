@@ -1,10 +1,10 @@
-import { withAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ApiResponse } from "@/lib/types";
-import { User } from "@prisma/client";
+import type { ApiResponse } from "@/lib/types";
+import type { User } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { withAuth } from "../utilts";
 
-export const PUT = withAuth(async (req, { session }) => {
+export const PUT = withAuth(async (req, ctx, { session }) => {
   try {
     const { name, email, image } = await req.json();
     const user = await prisma.user.update({
@@ -42,7 +42,7 @@ export const PUT = withAuth(async (req, { session }) => {
   }
 });
 
-export const DELETE = withAuth(async (_, { session }) => {
+export const DELETE = withAuth(async (req, ctx, { session }) => {
   const ownerOfChatbots = await prisma.chatbotUser.findMany({
     where: { userId: session.user.id, role: "OWNER" },
   });

@@ -1,9 +1,15 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ReactNode, createContext, useContext, useMemo, useState } from "react";
-import { ApiResponse } from "@/lib/types";
-import { Chatbot } from "@prisma/client";
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+import type { ApiResponse } from "@/lib/types";
+import type { Chatbot } from "@prisma/client";
 
 export type ChatbotsContextType = {
   chatbots: Chatbot[];

@@ -21,11 +21,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { APP_NAME } from "@/lib/constants";
-import { ApiResponse } from "@/lib/types";
+import type { ApiResponse } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { Loader2 } from "lucide-react";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";

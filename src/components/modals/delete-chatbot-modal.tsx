@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
-import { ApiErrorResponse } from "@/lib/types";
+import type { ApiErrorResponse } from "@/lib/types";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import { Input } from "../ui/input";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
-import { Chatbot } from "@prisma/client";
+import type { Chatbot } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 const deleteChatbotFn = async (slug: string) => {

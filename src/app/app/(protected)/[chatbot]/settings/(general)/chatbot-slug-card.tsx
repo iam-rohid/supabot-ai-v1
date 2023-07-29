@@ -21,9 +21,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { APP_NAME } from "@/lib/constants";
-import { ApiResponse } from "@/lib/types";
+import type { ApiResponse } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Chatbot } from "@prisma/client";
+import type { Chatbot } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";

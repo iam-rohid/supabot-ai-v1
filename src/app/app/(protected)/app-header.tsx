@@ -37,6 +37,10 @@ export default function AppHeader() {
                   exactMatch: true,
                 },
                 {
+                  href: `/${currentChatbot.slug}/pages`,
+                  label: "Pages",
+                },
+                {
                   href: `/${currentChatbot.slug}/settings`,
                   label: "Settings",
                 },
