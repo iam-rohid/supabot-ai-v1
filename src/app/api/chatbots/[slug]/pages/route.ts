@@ -11,10 +11,6 @@ import { Page, pagesTable } from "@/lib/schema/pages";
 import { and, eq } from "drizzle-orm";
 import { pageSectionsTable } from "@/lib/schema/page_sections";
 
-export const config = {
-  runtime: "edge",
-};
-
 export const GET = withChatbot(async (req, ctx) => {
   try {
     const pages = await db
@@ -98,7 +94,7 @@ export const POST = withChatbot(async (req, ctx) => {
         sections,
       );
       console.log("SECTION EMBEDDINGS ARE GENERATED");
-      console.log(JSON.stringify(sectionsWithEmbedding, null, 2))
+      console.log(JSON.stringify(sectionsWithEmbedding, null, 2));
       await Promise.all(
         sectionsWithEmbedding.map((section) =>
           db.insert(pageSectionsTable).values({
