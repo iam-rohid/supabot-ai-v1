@@ -17,7 +17,7 @@ import Link from "next/link";
 
 export default function ChatbotsList() {
   const { chatbots, isLoading } = useChatbots();
-  const { Modal: CreateChatBotModal, showModal: createChatbot } =
+  const [, setCreateChatbotModalOpen, CreateChatBotModal] =
     useCreateChatbotModal();
 
   return (
@@ -66,7 +66,9 @@ export default function ChatbotsList() {
             />
           </CardContent>
           <CardFooter className="justify-center">
-            <Button onClick={createChatbot}>Create a chatbot</Button>
+            <Button onClick={() => setCreateChatbotModalOpen(true)}>
+              Create a chatbot
+            </Button>
           </CardFooter>
         </Card>
       )}

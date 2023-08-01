@@ -22,6 +22,7 @@ export const PUT = withChatbot(
           ...(typeof name === "string" ? { name } : {}),
           ...(typeof slug === "string" ? { slug } : {}),
           ...(typeof description === "string" ? { description } : {}),
+          updatedAt: new Date(),
         })
         .where(eq(chatbotsTable.slug, ctx.params.slug))
         .returning();

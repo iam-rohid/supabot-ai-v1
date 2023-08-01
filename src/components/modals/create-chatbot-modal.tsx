@@ -20,7 +20,7 @@ import {
   createChatbotSchema,
 } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import type { ApiResponse } from "@/lib/types";
@@ -28,6 +28,7 @@ import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Chatbot } from "@/lib/schema/chatbots";
+import { UseModalReturning } from "./types";
 
 const createChatbotFn = async (data: CreateChatbotSchemaData) => {
   const res = await fetch("/api/chatbots", {
@@ -144,7 +145,7 @@ export function CreateChatbotModal({
   );
 }
 
-export const useCreateChatbotModal = () => {
+export const useCreateChatbotModal = (): UseModalReturning => {
   const [open, setOpen] = useState(false);
 
   const showModal = useCallback(() => {
@@ -156,13 +157,5 @@ export const useCreateChatbotModal = () => {
     [open],
   );
 
-  return useMemo(
-    () => ({
-      open,
-      setOpen,
-      showModal,
-      Modal,
-    }),
-    [Modal, open, showModal],
-  );
+  return [open, setOpen, Modal];
 };

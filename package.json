@@ -50,6 +50,7 @@
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "drizzle-orm": "^0.27.2",
+    "get-sitemap-links": "^1.1.0",
     "lucide-react": "^0.263.1",
     "mdast-util-from-markdown": "^2.0.0",
     "mdast-util-mdx": "^3.0.0",

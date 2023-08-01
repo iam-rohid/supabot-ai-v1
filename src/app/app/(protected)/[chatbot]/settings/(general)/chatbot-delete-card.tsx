@@ -13,7 +13,8 @@ import { APP_NAME } from "@/lib/constants";
 import { Chatbot } from "@/lib/schema/chatbots";
 
 export default function ChatbotDeleteCard({ chatbot }: { chatbot: Chatbot }) {
-  const { Modal, showModal } = useDeleteChatbotModal(chatbot);
+  const [, setDeleteChatbotModalOpen, DeleteChatbotModal] =
+    useDeleteChatbotModal(chatbot);
   return (
     <>
       <Card className="border-destructive">
@@ -25,12 +26,15 @@ export default function ChatbotDeleteCard({ chatbot }: { chatbot: Chatbot }) {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button variant="destructive" onClick={showModal}>
+          <Button
+            variant="destructive"
+            onClick={() => setDeleteChatbotModalOpen(true)}
+          >
             Delete Chatbot
           </Button>
         </CardFooter>
       </Card>
-      <Modal />
+      <DeleteChatbotModal />
     </>
   );
 }

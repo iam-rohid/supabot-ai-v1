@@ -8,39 +8,39 @@ import {
   WithChatbotContext,
 } from "../../utils";
 import { db } from "@/lib/drizzle";
-import { Page, pagesTable } from "@/lib/schema/pages";
+import { LinkModel, linksTable } from "@/lib/schema/links";
 import { and, eq } from "drizzle-orm";
 
-export type WithPageContext = {
-  params: { slug: string; pageId: string };
-  page: Page;
+export type WithLinkContext = {
+  params: { slug: string; link_id: string };
+  link: LinkModel;
 } & WithChatbotContext;
 
-export type WithPageHandlerProps = {
-  page: Page;
+export type WithLinkHandlerProps = {
+  link: LinkModel;
 } & WithChatbotHandlerProps;
-export type WithPageProps = WithChatProps & {};
+export type WithLinkProps = WithChatProps & {};
 
-export const withPage = <Ctx extends WithPageContext>(
-  handler: BaseRequestHandler<Ctx, WithPageHandlerProps>,
-  extraProps: WithPageProps = {},
+export const withLink = <Ctx extends WithLinkContext>(
+  handler: BaseRequestHandler<Ctx, WithLinkHandlerProps>,
+  extraProps: WithLinkProps = {},
 ) =>
   withChatbot<Ctx>(async (req, ctx) => {
-    const [page] = await db
+    const [link] = await db
       .select()
-      .from(pagesTable)
+      .from(linksTable)
       .where(
         and(
-          eq(pagesTable.id, ctx.params.pageId),
-          eq(pagesTable.chatbotId, ctx.chatbot.id),
+          eq(linksTable.id, ctx.params.link_id),
+          eq(linksTable.chatbotId, ctx.chatbot.id),
         ),
       );
-    if (!page) {
+    if (!link) {
       return NextResponse.json({
         success: false,
-        error: "Page not found!",
+        error: "Link not found!",
       } satisfies ApiResponse);
     }
-    ctx.page = page;
+    ctx.link = link;
     return handler(req, ctx);
   }, extraProps);

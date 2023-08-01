@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "569aa3b7-4bf5-47b9-9d5c-d581aa370749",
-  "prevId": "145b0437-21d2-498d-936b-608e399a80c8",
+  "id": "bf0598be-4960-4bd9-a4bf-8d2dfc6c0ce1",
+  "prevId": "2290a542-cc76-455e-b501-8b9488da201f",
   "tables": {
     "accounts": {
       "name": "accounts",
@@ -37,7 +37,7 @@
         },
         "type": {
           "name": "type",
-          "type": "varchar(80)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -67,12 +67,6 @@
         },
         "expires_at": {
           "name": "expires_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "refresh_token_expires_in": {
-          "name": "refresh_token_expires_in",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -272,8 +266,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "page_sections": {
-      "name": "page_sections",
+    "embeddings": {
+      "name": "embeddings",
       "schema": "",
       "columns": {
         "id": {
@@ -297,15 +291,15 @@
           "notNull": true,
           "default": "now()"
         },
-        "page_id": {
-          "name": "page_id",
+        "link_id": {
+          "name": "link_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
         "content": {
           "name": "content",
-          "type": "varchar(2000)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -330,12 +324,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "page_sections_page_id_pages_id_fk": {
-          "name": "page_sections_page_id_pages_id_fk",
-          "tableFrom": "page_sections",
-          "tableTo": "pages",
+        "embeddings_link_id_links_id_fk": {
+          "name": "embeddings_link_id_links_id_fk",
+          "tableFrom": "embeddings",
+          "tableTo": "links",
           "columnsFrom": [
-            "page_id"
+            "link_id"
           ],
           "columnsTo": [
             "id"
@@ -347,8 +341,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "pages": {
-      "name": "pages",
+    "links": {
+      "name": "links",
       "schema": "",
       "columns": {
         "id": {
@@ -374,7 +368,7 @@
         },
         "last_trained_at": {
           "name": "last_trained_at",
-          "type": "timestamp(3)",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
@@ -405,8 +399,8 @@
         }
       },
       "indexes": {
-        "pages_chatbot_id_url_index": {
-          "name": "pages_chatbot_id_url_index",
+        "links_chatbot_id_url_index": {
+          "name": "links_chatbot_id_url_index",
           "columns": [
             "chatbot_id",
             "url"
@@ -415,9 +409,9 @@
         }
       },
       "foreignKeys": {
-        "pages_chatbot_id_chatbots_id_fk": {
-          "name": "pages_chatbot_id_chatbots_id_fk",
-          "tableFrom": "pages",
+        "links_chatbot_id_chatbots_id_fk": {
+          "name": "links_chatbot_id_chatbots_id_fk",
+          "tableFrom": "links",
           "tableTo": "chatbots",
           "columnsFrom": [
             "chatbot_id"
@@ -532,6 +526,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "role": {
           "name": "role",
           "type": "user_role",
@@ -612,7 +612,8 @@
       "values": {
         "idle": "idle",
         "training": "training",
-        "trained": "trained"
+        "trained": "trained",
+        "failed": "failed"
       }
     },
     "user_role": {
@@ -627,6 +628,8 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {}
+    "columns": {
+      "\"embeddings\".\"page_id\"": "\"embeddings\".\"link_id\""
+    }
   }
 }

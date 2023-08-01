@@ -17,8 +17,8 @@ export const linkTrainingStatus = pgEnum("link_training_status", [
   "failed",
 ]);
 
-export const pagesTable = pgTable(
-  "pages",
+export const linksTable = pgTable(
+  "links",
   {
     id: uuid("id").primaryKey().defaultRandom().notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -40,5 +40,5 @@ export const pagesTable = pgTable(
   },
 );
 
-export type Page = InferModel<typeof pagesTable>;
-export type NewPage = InferModel<typeof pagesTable, "insert">;
+export type LinkModel = InferModel<typeof linksTable>;
+export type NewLinkModel = InferModel<typeof linksTable, "insert">;

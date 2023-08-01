@@ -77,6 +77,7 @@ export const authOptions: AuthOptions = {
             .update(usersTable)
             .set({
               name: profile.name,
+              updatedAt: new Date(),
             })
             .where(eq(usersTable.email, user.email));
         }

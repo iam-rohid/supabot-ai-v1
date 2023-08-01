@@ -4,14 +4,15 @@ import ThemeSwitcher from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import UserButton from "@/components/user-button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ChatbotSwitcher from "./chatbot-switcher";
 import { useChatbots } from "@/components/chatbots-provider";
 import type { MenuItem } from "@/lib/types";
 
 export default function AppHeader() {
-  const { currentChatbot } = useChatbots();
+  const { chatbot } = useParams();
+
   return (
     <header className="sticky top-0 z-20 border-b bg-card text-card-foreground">
       <div className="container flex h-16 items-center justify-between">
@@ -29,19 +30,19 @@ export default function AppHeader() {
       </div>
       <NavBar
         menuList={
-          currentChatbot
+          typeof chatbot === "string"
             ? [
                 {
-                  href: `/${currentChatbot.slug}`,
+                  href: `/${chatbot}`,
                   label: "Overview",
                   exactMatch: true,
                 },
                 {
-                  href: `/${currentChatbot.slug}/pages`,
-                  label: "Pages",
+                  href: `/${chatbot}/links`,
+                  label: "Links",
                 },
                 {
-                  href: `/${currentChatbot.slug}/settings`,
+                  href: `/${chatbot}/settings`,
                   label: "Settings",
                 },
               ]

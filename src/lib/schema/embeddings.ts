@@ -3,11 +3,11 @@ import {
   jsonb,
   pgTable,
   smallint,
+  text,
   timestamp,
   uuid,
-  varchar,
 } from "drizzle-orm/pg-core";
-import { pagesTable } from "./pages";
+import { linksTable } from "./links";
 import type { InferModel } from "drizzle-orm";
 
 const vector = customType<{
@@ -25,18 +25,18 @@ const vector = customType<{
   },
 });
 
-export const pageSectionsTable = pgTable("page_sections", {
+export const embeddingsTable = pgTable("embeddings", {
   id: uuid("id").primaryKey().defaultRandom().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  pageId: uuid("page_id")
+  linkId: uuid("link_id")
     .notNull()
-    .references(() => pagesTable.id, { onDelete: "cascade" }),
-  content: varchar("content", { length: 2000 }).notNull(),
+    .references(() => linksTable.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
   embedding: vector("embedding", { dimensions: 1536 }).notNull(),
   tokenCount: smallint("token_count").notNull(),
   metadata: jsonb("metadata").$type<Record<string, any>>(),
 });
 
-export type PageSection = InferModel<typeof pageSectionsTable>;
-export type NewPageSection = InferModel<typeof pageSectionsTable, "insert">;
+export type EmbeddingRow = InferModel<typeof embeddingsTable>;
+export type NewEmbeddingRow = InferModel<typeof embeddingsTable, "insert">;

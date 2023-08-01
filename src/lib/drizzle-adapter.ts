@@ -28,7 +28,10 @@ export const drizzleAdapter: NextAuthOptions["adapter"] = {
   updateUser: async ({ id, ...data }) => {
     const [user] = await db
       .update(usersTable)
-      .set(data)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
       .where(eq(usersTable.id, id))
       .returning();
     return user;

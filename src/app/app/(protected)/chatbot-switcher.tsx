@@ -22,7 +22,7 @@ import Link from "next/link";
 export default function ChatbotSwitcher() {
   const { data } = useSession();
   const { currentChatbot, chatbots, isLoading } = useChatbots();
-  const { Modal: CreateChatBotModal, showModal: createChatbot } =
+  const [, setCreateChatbotModalOpen, CreateChatBotModal] =
     useCreateChatbotModal();
   const domLoaded = useDomLoaded();
 
@@ -99,7 +99,7 @@ export default function ChatbotSwitcher() {
             ))}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={createChatbot}>
+          <DropdownMenuItem onClick={() => setCreateChatbotModalOpen(true)}>
             <PlusIcon size={20} className="mr-2" />
             New Chatbot
           </DropdownMenuItem>

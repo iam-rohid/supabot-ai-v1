@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +17,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { UseModalReturning } from "./types";
 
 const deleteAccountFn = async () => {
   const res = await fetch("/api/users", {
@@ -108,25 +109,13 @@ export function DeleteAccountModal({
   );
 }
 
-export const useDeleteAccountModal = () => {
+export const useDeleteAccountModal = (): UseModalReturning => {
   const [open, setOpen] = useState(false);
-
-  const showModal = useCallback(() => {
-    setOpen(true);
-  }, []);
 
   const Modal = useCallback(
     () => <DeleteAccountModal open={open} onOpenChange={setOpen} />,
     [open],
   );
 
-  return useMemo(
-    () => ({
-      open,
-      setOpen,
-      showModal,
-      Modal,
-    }),
-    [Modal, open, showModal],
-  );
+  return [open, setOpen, Modal];
 };

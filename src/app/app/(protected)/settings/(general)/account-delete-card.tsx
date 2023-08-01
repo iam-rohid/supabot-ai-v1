@@ -12,7 +12,7 @@ import {
 import { APP_NAME } from "@/lib/constants";
 
 export default function AccountDeleteCard() {
-  const { showModal, Modal } = useDeleteAccountModal();
+  const [, setDeleteModalOpen, DeleteModal] = useDeleteAccountModal();
   return (
     <>
       <Card className="border-destructive">
@@ -25,12 +25,15 @@ export default function AccountDeleteCard() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button variant="destructive" onClick={showModal}>
+          <Button
+            variant="destructive"
+            onClick={() => setDeleteModalOpen(true)}
+          >
             Delete Account
           </Button>
         </CardFooter>
       </Card>
-      <Modal />
+      <DeleteModal />
     </>
   );
 }

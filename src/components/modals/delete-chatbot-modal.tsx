@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import type { ApiErrorResponse } from "@/lib/types";
@@ -17,6 +17,7 @@ import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Chatbot } from "@/lib/schema/chatbots";
+import { UseModalReturning } from "./types";
 
 const deleteChatbotFn = async (slug: string) => {
   const res = await fetch(`/api/chatbots/${slug}`, {
@@ -130,32 +131,19 @@ export function DeleteChatbotModal({
   );
 }
 
-export const useDeleteChatbotModal = (chatbot: Chatbot) => {
+export const useDeleteChatbotModal = (chatbot: Chatbot): UseModalReturning => {
   const [open, setOpen] = useState(false);
 
-  const showModal = useCallback(() => {
-    setOpen(true);
-  }, []);
-
-  const ModalCallback = useCallback(
-    () =>
-      chatbot ? (
-        <DeleteChatbotModal
-          open={open}
-          onOpenChange={setOpen}
-          chatbot={chatbot}
-        />
-      ) : null,
+  const Modal = useCallback(
+    () => (
+      <DeleteChatbotModal
+        open={open}
+        onOpenChange={setOpen}
+        chatbot={chatbot}
+      />
+    ),
     [chatbot, open],
   );
 
-  return useMemo(
-    () => ({
-      open,
-      setOpen,
-      showModal,
-      Modal: ModalCallback,
-    }),
-    [ModalCallback, open, showModal],
-  );
+  return [open, setOpen, Modal];
 };

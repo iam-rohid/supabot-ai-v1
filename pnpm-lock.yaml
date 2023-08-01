@@ -113,6 +113,9 @@ dependencies:
   drizzle-orm:
     specifier: ^0.27.2
     version: 0.27.2(@neondatabase/serverless@0.5.6)
+  get-sitemap-links:
+    specifier: ^1.1.0
+    version: 1.1.0
   lucide-react:
     specifier: ^0.263.1
     version: 0.263.1(react@18.2.0)
@@ -3193,6 +3196,14 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
+  /axios@0.21.4:
+    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
+    dependencies:
+      follow-redirects: 1.15.2
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /axios@1.4.0:
     resolution: {integrity: sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==}
     dependencies:
@@ -4694,6 +4705,15 @@ packages:
   /get-nonce@1.0.1:
     resolution: {integrity: sha512-FJhYRoDaiatfEkUK8HKlicmu/3SGFD51q3itKDGoSTysQJBnfOcxU5GxnhE1E6soB76MbT0MBtnKJuXyAx+96Q==}
     engines: {node: '>=6'}
+    dev: false
+
+  /get-sitemap-links@1.1.0:
+    resolution: {integrity: sha512-bBFYMVLi2c+YJFOKcBfnU01t6Nr+ZeqwbOtI0zR7Y+bfvK3QvBBIb1Vf/Vkh4PzBnpRFtn/Hfjutb08vHDG5kw==}
+    engines: {node: '>=7.5.0'}
+    dependencies:
+      axios: 0.21.4
+    transitivePeerDependencies:
+      - debug
     dev: false
 
   /get-stream@6.0.1:

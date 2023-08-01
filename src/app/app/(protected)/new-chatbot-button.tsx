@@ -9,11 +9,11 @@ export default function NewChatbotButton({
 }: {
   label?: string;
 }) {
-  const { Modal: CreateChatBotModal, showModal: createChatbot } =
+  const [, setCreateChatbotModalOpen, CreateChatBotModal] =
     useCreateChatbotModal();
   return (
     <>
-      <Button onClick={createChatbot}>
+      <Button onClick={() => setCreateChatbotModalOpen(true)}>
         <PlusIcon size={20} className="-ml-1 mr-2" />
         {label}
       </Button>

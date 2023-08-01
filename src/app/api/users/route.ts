@@ -15,6 +15,7 @@ export const PUT = withAuth(async (req, ctx) => {
         ...(typeof name === "string" && name.length > 0 ? { name } : {}),
         ...(typeof email === "string" && email.length > 0 ? { email } : {}),
         ...(typeof image === "string" && image.length > 0 ? { image } : {}),
+        updatedAt: new Date(),
       })
       .where(eq(usersTable.id, ctx.session.user.id))
       .returning();
