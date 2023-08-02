@@ -44,10 +44,10 @@ import { ApiResponse } from "@/lib/types";
 
 const AddSingleLink = ({
   onOpenChange,
-  chatbot,
+  projectSlug,
 }: {
   onOpenChange: (value: boolean) => void;
-  chatbot: string;
+  projectSlug: string;
 }) => {
   const form = useForm<CreateLinkData>({
     resolver: zodResolver(createLinkSchema),
@@ -58,7 +58,7 @@ const AddSingleLink = ({
   const handleSubmit = useCallback(
     async (data: CreateLinkData) => {
       try {
-        const res = await fetch(`/api/chatbots/${chatbot}/links`, {
+        const res = await fetch(`/api/chatbots/${projectSlug}/links`, {
           method: "POST",
           body: JSON.stringify({
             urls: [data.url],
@@ -71,17 +71,17 @@ const AddSingleLink = ({
         if (!resData.success) {
           throw resData.error;
         }
-        await queryClient.invalidateQueries(["links", chatbot]);
+        await queryClient.invalidateQueries(["links", projectSlug]);
         onOpenChange(false);
       } catch (error) {
         toast({
           title:
-            typeof error === "string" ? error : "Failed to create chatbot!",
+            typeof error === "string" ? error : "Failed to create project!",
           variant: "destructive",
         });
       }
     },
-    [chatbot, onOpenChange, queryClient, toast],
+    [projectSlug, onOpenChange, queryClient, toast],
   );
 
   return (
@@ -276,11 +276,11 @@ const AddLinksFromSitemap = ({
 export function AddLinkModal({
   open,
   onOpenChange,
-  chatbot,
+  projectSlug,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  chatbot: string;
+  projectSlug: string;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -294,7 +294,10 @@ export function AddLinkModal({
             <TabsTrigger value="sitemap">Sitemap</TabsTrigger>
           </TabsList>
           <TabsContent value="url">
-            <AddSingleLink onOpenChange={onOpenChange} chatbot={chatbot} />
+            <AddSingleLink
+              onOpenChange={onOpenChange}
+              projectSlug={projectSlug}
+            />
           </TabsContent>
           <TabsContent value="sitemap">
             <AddLinksFromSitemap onOpenChange={onOpenChange} />
@@ -306,14 +309,20 @@ export function AddLinkModal({
 }
 
 export const useAddLinkModal = ({
-  chatbot,
+  projectSlug,
 }: {
-  chatbot: string;
+  projectSlug: string;
 }): UseModalReturning => {
   const [open, setOpen] = useState(false);
   const Modal = useCallback(
-    () => <AddLinkModal open={open} onOpenChange={setOpen} chatbot={chatbot} />,
-    [chatbot, open],
+    () => (
+      <AddLinkModal
+        open={open}
+        onOpenChange={setOpen}
+        projectSlug={projectSlug}
+      />
+    ),
+    [projectSlug, open],
   );
   return [open, setOpen, Modal];
 };

@@ -3,9 +3,9 @@ import { parseReq } from "./utils";
 import { getToken } from "next-auth/jwt";
 import { AUTH_PATHNAMES, RESURVED_APP_PATH_KEYS } from "../constants";
 import { db } from "../drizzle";
-import { chatbotsTable } from "../schema/chatbots";
+import { porjectsTable } from "../schema/chatbots";
 import { and, eq } from "drizzle-orm";
-import { chatbotUsersTable } from "../schema/chatbot-users";
+import { projectUsersTable } from "../schema/chatbot-users";
 
 export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
   const { pathname, pathKey, searchParams } = parseReq(req);
@@ -30,15 +30,15 @@ export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
   if (pathKey && !RESURVED_APP_PATH_KEYS.has(pathKey)) {
     const data = await db
       .select({})
-      .from(chatbotUsersTable)
+      .from(projectUsersTable)
       .leftJoin(
-        chatbotsTable,
-        eq(chatbotsTable.id, chatbotUsersTable.chatbotId),
+        porjectsTable,
+        eq(porjectsTable.id, projectUsersTable.projectId),
       )
       .where(
         and(
-          eq(chatbotUsersTable.userId, session!.user!.id),
-          eq(chatbotsTable.slug, pathKey),
+          eq(projectUsersTable.userId, session!.user!.id),
+          eq(porjectsTable.slug, pathKey),
         ),
       );
     if (!data.length) {

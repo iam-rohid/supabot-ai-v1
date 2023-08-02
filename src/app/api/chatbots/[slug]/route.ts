@@ -1,41 +1,41 @@
 import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
-import { withChatbot } from "./utils";
-import { Chatbot, chatbotsTable } from "@/lib/schema/chatbots";
+import { withProject } from "./utils";
+import { Project, porjectsTable } from "@/lib/schema/chatbots";
 import { db } from "@/lib/drizzle";
 import { eq } from "drizzle-orm";
 
-export const GET = withChatbot(async (req, ctx) => {
+export const GET = withProject(async (req, ctx) => {
   return NextResponse.json({
     success: true,
-    data: ctx.chatbot,
-  } satisfies ApiResponse<Chatbot>);
+    data: ctx.project,
+  } satisfies ApiResponse<Project>);
 });
 
-export const PUT = withChatbot(
+export const PUT = withProject(
   async (req, ctx) => {
     const { name, slug, description } = await req.json();
     try {
-      const [chatbot] = await db
-        .update(chatbotsTable)
+      const [project] = await db
+        .update(porjectsTable)
         .set({
           ...(typeof name === "string" ? { name } : {}),
           ...(typeof slug === "string" ? { slug } : {}),
           ...(typeof description === "string" ? { description } : {}),
           updatedAt: new Date(),
         })
-        .where(eq(chatbotsTable.slug, ctx.params.slug))
+        .where(eq(porjectsTable.slug, ctx.params.slug))
         .returning();
       return NextResponse.json({
         success: true,
-        message: "Chatbot updated!",
-        data: chatbot,
-      } satisfies ApiResponse<Chatbot>);
+        message: "Project updated!",
+        data: project,
+      } satisfies ApiResponse<Project>);
     } catch (error: any) {
       return NextResponse.json(
         {
           success: false,
-          error: "Failed to update chatbot",
+          error: "Failed to update project",
         } satisfies ApiResponse,
         { status: 400 },
       );
@@ -44,23 +44,23 @@ export const PUT = withChatbot(
   { requireRoles: ["owner", "admin"] },
 );
 
-export const DELETE = withChatbot(
+export const DELETE = withProject(
   async (req, ctx) => {
     try {
-      const [chatbot] = await db
-        .delete(chatbotsTable)
-        .where(eq(chatbotsTable.slug, ctx.params.slug))
+      const [project] = await db
+        .delete(porjectsTable)
+        .where(eq(porjectsTable.slug, ctx.params.slug))
         .returning();
       return NextResponse.json({
         success: true,
-        message: "Chatbot deleted!",
-        data: chatbot,
-      } satisfies ApiResponse<Chatbot>);
+        message: "Project deleted!",
+        data: project,
+      } satisfies ApiResponse<Project>);
     } catch (error) {
       return NextResponse.json(
         {
           success: false,
-          error: "Failed to delete chatbot",
+          error: "Failed to delete project",
         } satisfies ApiResponse,
         { status: 400 },
       );

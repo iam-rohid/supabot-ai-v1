@@ -16,10 +16,10 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Chatbot } from "@/lib/schema/chatbots";
+import { Project } from "@/lib/schema/chatbots";
 import { UseModalReturning } from "./types";
 
-const deleteChatbotFn = async (slug: string) => {
+const deleteProjectFn = async (slug: string) => {
   const res = await fetch(`/api/chatbots/${slug}`, {
     method: "DELETE",
   });
@@ -29,18 +29,18 @@ const deleteChatbotFn = async (slug: string) => {
   }
 };
 
-const VERIFY_MESSAGE = "confirm delete chatbot";
+const VERIFY_MESSAGE = "confirm delete project";
 
-export function DeleteChatbotModal({
+export function DeleteProjectModal({
   open,
   onOpenChange,
-  chatbot,
+  project,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  chatbot: Chatbot;
+  project: Project;
 }) {
-  const [chatbotSlug, setChatbotSlug] = useState("");
+  const [projectSlug, setProjectSlug] = useState("");
   const [verifyText, setVerifyText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
@@ -50,29 +50,29 @@ export function DeleteChatbotModal({
   const handleDelete = useCallback(async () => {
     if (
       isDeleting ||
-      !(chatbotSlug === chatbot.slug && verifyText === VERIFY_MESSAGE)
+      !(projectSlug === project.slug && verifyText === VERIFY_MESSAGE)
     ) {
       return;
     }
     setIsDeleting(true);
     try {
-      await deleteChatbotFn(chatbot.slug);
-      queryClient.setQueryData<Chatbot[]>(["chatbots"], (chatbots) =>
-        chatbots ? chatbots.filter((bot) => bot.slug !== chatbot.slug) : [],
+      await deleteProjectFn(project.slug);
+      queryClient.setQueryData<Project[]>(["projects"], (projects) =>
+        projects ? projects.filter((bot) => bot.slug !== project.slug) : [],
       );
-      toast({ title: "Chatbot deleted successfully!" });
-      router.push("/");
+      toast({ title: "Project deleted successfully!" });
+      router.push("/dashboard");
     } catch (error) {
       setIsDeleting(false);
       toast({
-        title: typeof error === "string" ? error : "Failed to delete chatbot!",
+        title: typeof error === "string" ? error : "Failed to delete project!",
         variant: "destructive",
       });
     }
   }, [
     isDeleting,
-    chatbotSlug,
-    chatbot.slug,
+    projectSlug,
+    project.slug,
     verifyText,
     queryClient,
     toast,
@@ -83,20 +83,20 @@ export function DeleteChatbotModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Chatbot</DialogTitle>
+          <DialogTitle>Delete Project</DialogTitle>
           <DialogDescription>
-            Warning: This will permanently delete your chatbot and their
+            Warning: This will permanently delete your project and their
             respective stats.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-6">
           <fieldset className="grid gap-2">
             <Label htmlFor="verify">
-              Enter the chatbot slug <strong>{chatbot.slug}</strong> to continue
+              Enter the project slug <strong>{project.slug}</strong> to continue
             </Label>
             <Input
-              value={chatbotSlug}
-              onChange={(e) => setChatbotSlug(e.currentTarget.value)}
+              value={projectSlug}
+              onChange={(e) => setProjectSlug(e.currentTarget.value)}
             />
           </fieldset>
           <fieldset className="grid gap-2">
@@ -116,14 +116,14 @@ export function DeleteChatbotModal({
           <Button
             disabled={
               isDeleting ||
-              !(verifyText === VERIFY_MESSAGE && chatbotSlug === chatbot.slug)
+              !(verifyText === VERIFY_MESSAGE && projectSlug === project.slug)
             }
             onClick={handleDelete}
           >
             {isDeleting && (
               <Loader2 className="-ml-1 mr-2 h-4 w-4 animate-spin" />
             )}
-            Delete Chatbot
+            Delete Project
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -131,18 +131,18 @@ export function DeleteChatbotModal({
   );
 }
 
-export const useDeleteChatbotModal = (chatbot: Chatbot): UseModalReturning => {
+export const useDeleteProjectModal = (project: Project): UseModalReturning => {
   const [open, setOpen] = useState(false);
 
   const Modal = useCallback(
     () => (
-      <DeleteChatbotModal
+      <DeleteProjectModal
         open={open}
         onOpenChange={setOpen}
-        chatbot={chatbot}
+        project={project}
       />
     ),
-    [chatbot, open],
+    [project, open],
   );
 
   return [open, setOpen, Modal];

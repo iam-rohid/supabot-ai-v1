@@ -58,8 +58,8 @@ export const authOptions: AuthOptions = {
     },
     session: async ({ session, token }) => {
       session.user = {
-        ...token.user,
         ...session.user,
+        ...token.user,
       };
       return session;
     },
@@ -69,14 +69,19 @@ export const authOptions: AuthOptions = {
       }
       if (account?.provider === "github") {
         const [userExist] = await db
-          .select({ name: usersTable.name })
+          .select({ name: usersTable.name, image: usersTable.image })
           .from(usersTable)
           .where(eq(usersTable.email, user.email));
-        if (userExist && !userExist.name && profile?.name) {
+        if (
+          userExist &&
+          ((!userExist.name && profile?.name?.length) ||
+            (!userExist.image && profile?.image?.length))
+        ) {
           await db
             .update(usersTable)
             .set({
-              name: profile.name,
+              ...(!userExist.name ? { name: profile.name } : {}),
+              ...(!userExist.image ? { image: profile.image } : {}),
               updatedAt: new Date(),
             })
             .where(eq(usersTable.email, user.email));

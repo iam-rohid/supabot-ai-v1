@@ -7,7 +7,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { chatbotsTable } from "./chatbots";
+import { porjectsTable } from "./chatbots";
 import type { InferModel } from "drizzle-orm";
 
 export const linkTrainingStatus = pgEnum("link_training_status", [
@@ -25,9 +25,9 @@ export const linksTable = pgTable(
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
     lastTrainedAt: timestamp("last_trained_at"),
     url: varchar("url", { length: 255 }).notNull(),
-    chatbotId: uuid("chatbot_id")
+    projectId: uuid("chatbot_id")
       .notNull()
-      .references(() => chatbotsTable.id, { onDelete: "cascade" }),
+      .references(() => porjectsTable.id, { onDelete: "cascade" }),
     metadata: jsonb("metadata").$type<Record<string, any>>(),
     trainingStatus: linkTrainingStatus("training_status")
       .default("idle")
@@ -35,7 +35,7 @@ export const linksTable = pgTable(
   },
   (table) => {
     return {
-      chatbotIdUrlKey: uniqueIndex().on(table.chatbotId, table.url),
+      projectIdUrlKey: uniqueIndex().on(table.projectId, table.url),
     };
   },
 );

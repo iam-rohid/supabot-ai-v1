@@ -7,61 +7,61 @@ import {
   withAuth,
   WithAuthContext,
 } from "../../utilts";
-import { Chatbot, chatbotsTable } from "@/lib/schema/chatbots";
-import { ChatbotUser, chatbotUsersTable } from "@/lib/schema/chatbot-users";
+import { Project, porjectsTable } from "@/lib/schema/chatbots";
+import { ProjectUser, projectUsersTable } from "@/lib/schema/chatbot-users";
 import { db } from "@/lib/drizzle";
 import { and, eq } from "drizzle-orm";
 
-export type WithChatbotContext = {
+export type WithProjectContext = {
   params: {
     slug: string;
   };
-  chatbot: Chatbot;
+  project: Project;
 } & WithAuthContext;
 
-export type WithChatbotHandlerProps = WithAuthHandlerProps & {};
-export type WithChatProps = WithAuthProps & {
-  requireRoles?: ChatbotUser["role"][];
+export type WithProjectHandlerProps = WithAuthHandlerProps & {};
+export type WithProjectProps = WithAuthProps & {
+  requireRoles?: ProjectUser["role"][];
 };
 
-export const withChatbot = <C extends WithChatbotContext>(
-  handler: BaseRequestHandler<C, WithChatbotHandlerProps>,
-  extraProps: WithChatProps = {},
+export const withProject = <C extends WithProjectContext>(
+  handler: BaseRequestHandler<C, WithProjectHandlerProps>,
+  extraProps: WithProjectProps = {},
 ) =>
   withAuth<C>(async (req, ctx) => {
-    const [chatbot] = await db
+    const [project] = await db
       .select({
-        id: chatbotsTable.id,
-        createdAt: chatbotsTable.createdAt,
-        updatedAt: chatbotsTable.updatedAt,
-        name: chatbotsTable.name,
-        slug: chatbotsTable.slug,
-        description: chatbotsTable.description,
-        role: chatbotUsersTable.role,
+        id: porjectsTable.id,
+        createdAt: porjectsTable.createdAt,
+        updatedAt: porjectsTable.updatedAt,
+        name: porjectsTable.name,
+        slug: porjectsTable.slug,
+        description: porjectsTable.description,
+        role: projectUsersTable.role,
       })
-      .from(chatbotsTable)
+      .from(porjectsTable)
       .innerJoin(
-        chatbotUsersTable,
-        eq(chatbotUsersTable.chatbotId, chatbotsTable.id),
+        projectUsersTable,
+        eq(projectUsersTable.projectId, porjectsTable.id),
       )
       .where(
         and(
-          eq(chatbotsTable.slug, ctx.params.slug),
-          eq(chatbotUsersTable.userId, ctx.session.user.id),
+          eq(porjectsTable.slug, ctx.params.slug),
+          eq(projectUsersTable.userId, ctx.session.user.id),
         ),
       );
 
-    if (!chatbot) {
+    if (!project) {
       return NextResponse.json({
         success: false,
-        error: "Chatbot not found!",
+        error: "Project not found!",
       } satisfies ApiResponse);
     }
 
     if (
       extraProps.requireRoles &&
       extraProps.requireRoles.length > 0 &&
-      !new Set(extraProps.requireRoles).has(chatbot.role)
+      !new Set(extraProps.requireRoles).has(project.role)
     ) {
       return NextResponse.json({
         success: false,
@@ -69,7 +69,7 @@ export const withChatbot = <C extends WithChatbotContext>(
       } satisfies ApiResponse);
     }
 
-    ctx.chatbot = chatbot;
+    ctx.project = project;
 
     return handler(req, ctx);
   });

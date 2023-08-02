@@ -7,108 +7,147 @@ import { usersTable } from "./schema/users";
 import { verificationTokensTable } from "./schema/verification-tokens";
 
 export const drizzleAdapter: NextAuthOptions["adapter"] = {
-  createUser: async (data) => {
-    const [user] = await db.insert(usersTable).values(data).returning();
-    return user;
+  createUser: async (args) => {
+    const [data] = await db.insert(usersTable).values(args).returning();
+    console.log("createUser", {
+      data,
+      args,
+    });
+    return data;
   },
   getUser: async (userId) => {
-    const [user] = await db
+    const [data] = await db
       .select()
       .from(usersTable)
       .where(eq(usersTable.id, userId));
-    return user;
+    console.log("getUser", {
+      data,
+      args: { userId },
+    });
+    return data;
   },
   getUserByEmail: async (email) => {
-    const [user] = await db
+    const [data] = await db
       .select()
       .from(usersTable)
       .where(eq(usersTable.email, email));
-    return user;
+    console.log("getUserByEmail", {
+      data,
+      args: { email },
+    });
+    return data;
   },
-  updateUser: async ({ id, ...data }) => {
-    const [user] = await db
+  updateUser: async (args) => {
+    const { id, ...restArgs } = args;
+    const [data] = await db
       .update(usersTable)
       .set({
-        ...data,
+        ...restArgs,
         updatedAt: new Date(),
       })
       .where(eq(usersTable.id, id))
       .returning();
-    return user;
+    console.log("updateUser", {
+      data,
+      args,
+    });
+    return data;
   },
   deleteUser: async (userId) => {
-    const [user] = await db
+    const [data] = await db
       .delete(usersTable)
       .where(eq(usersTable.id, userId))
       .returning();
-    return user;
+    console.log("deleteUser", {
+      data,
+      args: { userId },
+    });
+    return data;
   },
-  createSession: async (data) => {
-    const [session] = await db.insert(sessionsTable).values(data).returning();
-    return session;
+  createSession: async (args) => {
+    const [data] = await db.insert(sessionsTable).values(args).returning();
+    console.log("createSession", {
+      data,
+      args,
+    });
+    return data;
   },
-  updateSession: async ({ sessionToken, ...data }) => {
-    const [session] = await db
+  updateSession: async (args) => {
+    const { sessionToken, ...restArgs } = args;
+    const [data] = await db
       .update(sessionsTable)
-      .set(data)
+      .set(restArgs)
       .where(eq(sessionsTable.sessionToken, sessionToken))
       .returning();
-    return session;
+    console.log("updateSession", {
+      data,
+      args,
+    });
+    return data;
   },
   deleteSession: async (sessionToken) => {
-    const [session] = await db
+    const [data] = await db
       .delete(sessionsTable)
       .where(eq(sessionsTable.sessionToken, sessionToken))
       .returning();
-    return session;
+    console.log("deleteSession", {
+      data,
+      args: { sessionToken },
+    });
+    return data;
   },
-  getSessionAndUser: async (sessionToken: string) => {
-    const [sessionAndUser] = await db
+  getSessionAndUser: async (sessionToken) => {
+    const [data] = await db
       .select()
       .from(sessionsTable)
       .innerJoin(usersTable, eq(usersTable.id, sessionsTable.userId))
       .where(eq(sessionsTable.sessionToken, sessionToken));
+    console.log("getSessionAndUser", {
+      data,
+      args: { sessionToken },
+    });
     return {
-      session: sessionAndUser.sessions,
-      user: sessionAndUser.users,
+      session: data.sessions,
+      user: data.users,
     };
   },
-  linkAccount: async (data) => {
-    const [account] = await db
+  linkAccount: async (args) => {
+    const [data] = await db
       .insert(accountsTable)
       .values({
-        accessToken: data.access_token,
-        expiresAt: data.expires_at,
-        idToken: data.id_token,
-        provider: data.provider,
-        providerAccountId: data.providerAccountId,
-        refreshToken: data.refresh_token,
-        scope: data.scope,
-        sessionState: data.session_state,
-        tokenType: data.token_type,
-        type: data.type,
-        userId: data.userId,
+        accessToken: args.access_token,
+        expiresAt: args.expires_at,
+        idToken: args.id_token,
+        provider: args.provider,
+        providerAccountId: args.providerAccountId,
+        refreshToken: args.refresh_token,
+        scope: args.scope,
+        sessionState: args.session_state,
+        tokenType: args.token_type,
+        type: args.type,
+        userId: args.userId,
       })
       .returning();
-    if (!account) {
-      throw "Failed to link account";
-    }
+    console.log("linkAccount", {
+      data,
+      args,
+    });
     return {
-      access_token: account.accessToken || undefined,
-      expires_at: account.expiresAt || undefined,
-      id_token: account.idToken || undefined,
-      provider: account.provider,
-      providerAccountId: account.providerAccountId,
-      refresh_token: account.refreshToken || undefined,
-      scope: account.scope || undefined,
-      session_state: account.sessionState || undefined,
-      token_type: account.tokenType || undefined,
-      type: account.type,
-      userId: account.userId,
+      access_token: data.accessToken || undefined,
+      expires_at: data.expiresAt || undefined,
+      id_token: data.idToken || undefined,
+      provider: data.provider,
+      providerAccountId: data.providerAccountId,
+      refresh_token: data.refreshToken || undefined,
+      scope: data.scope || undefined,
+      session_state: data.sessionState || undefined,
+      token_type: data.tokenType || undefined,
+      type: data.type,
+      userId: data.userId,
     };
   },
-  getUserByAccount: async ({ provider, providerAccountId }) => {
-    const [user] = await db
+  getUserByAccount: async (args) => {
+    const [data] = await db
       .select({
         id: usersTable.id,
         name: usersTable.name,
@@ -121,58 +160,71 @@ export const drizzleAdapter: NextAuthOptions["adapter"] = {
       .innerJoin(usersTable, eq(usersTable.id, accountsTable.userId))
       .where(
         and(
-          eq(accountsTable.provider, provider),
-          eq(accountsTable.providerAccountId, providerAccountId),
+          eq(accountsTable.provider, args.provider),
+          eq(accountsTable.providerAccountId, args.providerAccountId),
         ),
       );
-    return user || null;
+    console.log("getUserByAccount", {
+      data,
+      args,
+    });
+    return data;
   },
-  unlinkAccount: async ({ provider, providerAccountId }) => {
-    const [account] = await db
+  unlinkAccount: async (args) => {
+    const [data] = await db
       .delete(accountsTable)
       .where(
         and(
-          eq(accountsTable.provider, provider),
-          eq(accountsTable.providerAccountId, providerAccountId),
+          eq(accountsTable.provider, args.provider),
+          eq(accountsTable.providerAccountId, args.providerAccountId),
         ),
       )
       .returning();
 
-    if (!account) {
-      throw "Failed to unlink account";
-    }
+    console.log("unlinkAccount", {
+      data,
+      args,
+    });
 
     return {
-      access_token: account.accessToken || undefined,
-      expires_at: account.expiresAt || undefined,
-      id_token: account.idToken || undefined,
-      provider: account.provider,
-      providerAccountId: account.providerAccountId,
-      refresh_token: account.refreshToken || undefined,
-      scope: account.scope || undefined,
-      session_state: account.sessionState || undefined,
-      token_type: account.tokenType || undefined,
-      type: account.type,
-      userId: account.userId,
+      access_token: data.accessToken ?? undefined,
+      expires_at: data.expiresAt ?? undefined,
+      id_token: data.idToken ?? undefined,
+      provider: data.provider,
+      providerAccountId: data.providerAccountId,
+      refresh_token: data.refreshToken ?? undefined,
+      scope: data.scope ?? undefined,
+      session_state: data.sessionState ?? undefined,
+      token_type: data.tokenType ?? undefined,
+      type: data.type,
+      userId: data.userId,
     };
   },
-  createVerificationToken: async (data) => {
-    const [token] = await db
+  createVerificationToken: async (args) => {
+    const [data] = await db
       .insert(verificationTokensTable)
-      .values(data)
+      .values(args)
       .returning();
-    return token;
+    console.log("createVerificationToken", {
+      data,
+      args,
+    });
+    return data;
   },
-  useVerificationToken: async ({ identifier, token }) => {
-    const [verificationToken] = await db
+  useVerificationToken: async (args) => {
+    const [data] = await db
       .delete(verificationTokensTable)
       .where(
         and(
-          eq(verificationTokensTable.identifier, identifier),
-          eq(verificationTokensTable.token, token),
+          eq(verificationTokensTable.identifier, args.identifier),
+          eq(verificationTokensTable.token, args.token),
         ),
       )
       .returning();
-    return verificationToken;
+    console.log("useVerificationToken", {
+      data,
+      args,
+    });
+    return data;
   },
 };

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -11,17 +10,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
-import { useDomLoaded } from "@/hooks/useDomLoaded";
 import { LogOutIcon, SettingsIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "./ui/skeleton";
 
 export default function UserButton() {
   const { status, data } = useSession();
   const { toast } = useToast();
   const router = useRouter();
-  const domLoaded = useDomLoaded();
 
   const handleSignOut = async () => {
     try {
@@ -39,19 +38,19 @@ export default function UserButton() {
     }
   };
 
-  if (!domLoaded || status !== "authenticated") {
-    return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted" />
-    );
+  if (status !== "authenticated") {
+    return <Skeleton className="h-10 w-10 rounded-full" />;
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
-          <img
+          <Image
             src={data.user.image || `/api/avatar/${data.user.id}`}
             className="h-10 w-10 rounded-full object-cover"
+            width={256}
+            height={256}
             alt="User avatar"
           />
         </Button>
@@ -65,7 +64,7 @@ export default function UserButton() {
         </div>
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/settings">
+            <Link href="/dashboard/settings">
               <SettingsIcon size={20} className="mr-2" />
               <div className="flex-1 truncate">Settings</div>
             </Link>

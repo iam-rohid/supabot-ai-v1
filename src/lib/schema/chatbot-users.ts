@@ -5,35 +5,35 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { chatbotsTable } from "./chatbots";
+import { porjectsTable } from "./chatbots";
 import { usersTable } from "./users";
 import type { InferModel } from "drizzle-orm";
 
-export const chatbotUserRole = pgEnum("ChatbotUserRole", [
+export const projectUserRole = pgEnum("ChatbotUserRole", [
   "owner",
   "admin",
   "member",
 ]);
 
-export const chatbotUsersTable = pgTable(
+export const projectUsersTable = pgTable(
   "chatbot_users",
   {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
-    chatbotId: uuid("chatbot_id")
+    projectId: uuid("chatbot_id")
       .notNull()
-      .references(() => chatbotsTable.id, { onDelete: "cascade" }),
+      .references(() => porjectsTable.id, { onDelete: "cascade" }),
     userId: uuid("user_id")
       .notNull()
       .references(() => usersTable.id, { onDelete: "cascade" }),
-    role: chatbotUserRole("role").default("member").notNull(),
+    role: projectUserRole("role").default("member").notNull(),
   },
   (table) => {
     return {
-      pk: primaryKey(table.chatbotId, table.userId),
+      pk: primaryKey(table.projectId, table.userId),
     };
   },
 );
 
-export type ChatbotUser = InferModel<typeof chatbotUsersTable>;
-export type NewChatbotUser = InferModel<typeof chatbotUsersTable, "insert">;
+export type ProjectUser = InferModel<typeof projectUsersTable>;
+export type NewProjectUser = InferModel<typeof projectUsersTable, "insert">;

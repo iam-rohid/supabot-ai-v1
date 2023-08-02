@@ -2,10 +2,10 @@ import { type BaseRequestHandler } from "@/app/api/utilts";
 import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import {
-  type WithChatProps,
-  type WithChatbotHandlerProps,
-  withChatbot,
-  WithChatbotContext,
+  type WithProjectProps,
+  type WithProjectHandlerProps,
+  withProject,
+  WithProjectContext,
 } from "../../utils";
 import { db } from "@/lib/drizzle";
 import { LinkModel, linksTable } from "@/lib/schema/links";
@@ -14,25 +14,25 @@ import { and, eq } from "drizzle-orm";
 export type WithLinkContext = {
   params: { slug: string; link_id: string };
   link: LinkModel;
-} & WithChatbotContext;
+} & WithProjectContext;
 
 export type WithLinkHandlerProps = {
   link: LinkModel;
-} & WithChatbotHandlerProps;
-export type WithLinkProps = WithChatProps & {};
+} & WithProjectHandlerProps;
+export type WithLinkProps = WithProjectProps & {};
 
 export const withLink = <Ctx extends WithLinkContext>(
   handler: BaseRequestHandler<Ctx, WithLinkHandlerProps>,
   extraProps: WithLinkProps = {},
 ) =>
-  withChatbot<Ctx>(async (req, ctx) => {
+  withProject<Ctx>(async (req, ctx) => {
     const [link] = await db
       .select()
       .from(linksTable)
       .where(
         and(
           eq(linksTable.id, ctx.params.link_id),
-          eq(linksTable.chatbotId, ctx.chatbot.id),
+          eq(linksTable.projectId, ctx.project.id),
         ),
       );
     if (!link) {

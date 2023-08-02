@@ -8,7 +8,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const chatbotsTable = pgTable(
+export const porjectsTable = pgTable(
   "chatbots",
   {
     id: uuid("id").primaryKey().defaultRandom().notNull(),
@@ -26,5 +26,5 @@ export const chatbotsTable = pgTable(
   },
 );
 
-export type Chatbot = InferModel<typeof chatbotsTable>;
-export type NewChatbot = InferModel<typeof chatbotsTable, "insert">;
+export type Project = InferModel<typeof porjectsTable>;
+export type NewProject = InferModel<typeof porjectsTable, "insert">;

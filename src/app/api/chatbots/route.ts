@@ -1,51 +1,51 @@
 import type { ApiResponse } from "@/lib/types";
 import {
-  CreateChatbotSchemaData,
-  createChatbotSchema,
+  CreateProjectSchemaData,
+  createProjectSchema,
 } from "@/lib/validations";
 import { NextResponse } from "next/server";
 import { withAuth } from "../utilts";
-import { Chatbot, chatbotsTable } from "@/lib/schema/chatbots";
+import { Project, porjectsTable } from "@/lib/schema/chatbots";
 import { db } from "@/lib/drizzle";
-import { chatbotUsersTable } from "@/lib/schema/chatbot-users";
+import { projectUsersTable } from "@/lib/schema/chatbot-users";
 import { eq } from "drizzle-orm";
 
 export const GET = withAuth(async (req, ctx) => {
   try {
-    const chatbots = await db
+    const projects = await db
       .select({
-        id: chatbotsTable.id,
-        createdAt: chatbotsTable.createdAt,
-        updatedAt: chatbotsTable.updatedAt,
-        name: chatbotsTable.name,
-        slug: chatbotsTable.slug,
-        description: chatbotsTable.description,
+        id: porjectsTable.id,
+        createdAt: porjectsTable.createdAt,
+        updatedAt: porjectsTable.updatedAt,
+        name: porjectsTable.name,
+        slug: porjectsTable.slug,
+        description: porjectsTable.description,
       })
-      .from(chatbotUsersTable)
+      .from(projectUsersTable)
       .innerJoin(
-        chatbotsTable,
-        eq(chatbotsTable.id, chatbotUsersTable.chatbotId),
+        porjectsTable,
+        eq(porjectsTable.id, projectUsersTable.projectId),
       )
-      .where(eq(chatbotUsersTable.userId, ctx.session.user.id));
+      .where(eq(projectUsersTable.userId, ctx.session.user.id));
 
     return NextResponse.json({
       success: true,
-      data: chatbots,
-    } satisfies ApiResponse<Chatbot[]>);
+      data: projects,
+    } satisfies ApiResponse<Project[]>);
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: "Failed to load chatbots",
-    } satisfies ApiResponse<Chatbot[]>);
+      error: "Failed to load projects",
+    } satisfies ApiResponse<Project[]>);
   }
 });
 
 export const POST = withAuth(async (req, ctx) => {
   const body = await req.json();
 
-  let data: CreateChatbotSchemaData;
+  let data: CreateProjectSchemaData;
   try {
-    data = await createChatbotSchema.parseAsync(body);
+    data = await createProjectSchema.parseAsync(body);
   } catch (error) {
     return NextResponse.json(
       {
@@ -57,25 +57,25 @@ export const POST = withAuth(async (req, ctx) => {
   }
 
   try {
-    const [chatbot] = await db.insert(chatbotsTable).values(data).returning();
-    await db.insert(chatbotUsersTable).values({
-      chatbotId: chatbot.id,
+    const [project] = await db.insert(porjectsTable).values(data).returning();
+    await db.insert(projectUsersTable).values({
+      projectId: project.id,
       userId: ctx.session.user.id,
       role: "owner",
     });
 
     return NextResponse.json({
       success: true,
-      message: "Chatbot created",
-      data: chatbot,
-    } satisfies ApiResponse<Chatbot>);
+      message: "Project created",
+      data: project,
+    } satisfies ApiResponse<Project>);
   } catch (error: any) {
-    console.error("Failed to create chatbot: ", error);
+    console.error("Failed to create project: ", error);
     if (error.code === "P2002") {
       return NextResponse.json(
         {
           success: false,
-          error: "Chatbot slug is already in use.",
+          error: "Project slug is already in use.",
         } satisfies ApiResponse,
         { status: 422 },
       );
@@ -84,7 +84,7 @@ export const POST = withAuth(async (req, ctx) => {
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to create chatbot",
+        error: "Failed to create project",
       } satisfies ApiResponse,
       { status: 400 },
     );

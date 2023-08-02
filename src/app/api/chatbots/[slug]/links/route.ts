@@ -1,17 +1,17 @@
 import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
-import { withChatbot } from "../utils";
+import { withProject } from "../utils";
 import { db } from "@/lib/drizzle";
 import { LinkModel, linksTable } from "@/lib/schema/links";
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
-export const GET = withChatbot(async (req, ctx) => {
+export const GET = withProject(async (req, ctx) => {
   try {
     const links = await db
       .select()
       .from(linksTable)
-      .where(eq(linksTable.chatbotId, ctx.chatbot.id))
+      .where(eq(linksTable.projectId, ctx.project.id))
       .orderBy(desc(linksTable.lastTrainedAt), desc(linksTable.updatedAt));
 
     return NextResponse.json({
@@ -29,7 +29,7 @@ export const GET = withChatbot(async (req, ctx) => {
   }
 });
 
-export const POST = withChatbot(async (req, ctx) => {
+export const POST = withProject(async (req, ctx) => {
   const { urls } = await req.json();
   const urlList = z.array(z.string().url()).min(1).parse(urls);
 
@@ -39,22 +39,23 @@ export const POST = withChatbot(async (req, ctx) => {
       .values(
         urlList.map((url) => ({
           url,
-          chatbotId: ctx.chatbot.id,
+          projectId: ctx.project.id,
         })),
       )
       .returning()
       .onConflictDoNothing();
 
-    await Promise.all(
-      links.map(async (link) =>
-        fetch(
-          `http://app.localhost:3000/api/chatbots/${ctx.chatbot.slug}/links/${link.id}/retrain`,
-          {
-            method: "POST",
-          },
-        ),
-      ),
-    );
+    // TODO: Train on websoket or something
+    // await Promise.all(
+    //   links.map(async (link) =>
+    //     fetch(
+    //       `http://app.localhost:3000/api/chatbots/${ctx.project.slug}/links/${link.id}/retrain`,
+    //       {
+    //         method: "POST",
+    //       },
+    //     ),
+    //   ),
+    // );
 
     return NextResponse.json({
       success: true,
