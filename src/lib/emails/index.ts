@@ -1,4 +1,4 @@
-import { nanoid } from "@/lib/utils";
+// import { nanoid } from "@/lib/utils";
 import { ReactElement, JSXElementConstructor } from "react";
 import { Resend } from "resend";
 import { APP_NAME, EMAIL_DOMAIN } from "../constants";
@@ -26,7 +26,7 @@ export const sendEmail = async ({
     subject,
     react,
     headers: {
-      "X-Entity-Ref-ID": nanoid(),
+      // "X-Entity-Ref-ID": nanoid(),
     },
   });
 };

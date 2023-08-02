@@ -1,13 +1,5 @@
-import { NextFetchEvent, NextRequest } from "next/server";
-import { parseReq } from "./lib/middleware/utils";
-import {
-  ADMIN_HOSTNAMES,
-  APP_HOSTNAMES,
-  HOME_HOSTNAMES,
-} from "./lib/constants";
-import { appMiddleware } from "./lib/middleware/app";
-import { adminMiddleware } from "./lib/middleware/admin";
-import { rootMiddleware } from "./lib/middleware/root";
+import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 export const config = {
   matcher: [
@@ -25,15 +17,16 @@ export const config = {
 };
 
 export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
-  const { domain } = parseReq(req);
-
-  if (APP_HOSTNAMES.has(domain)) {
-    return appMiddleware(req, ev);
-  }
-  if (ADMIN_HOSTNAMES.has(domain)) {
-    return adminMiddleware(req, ev);
-  }
-  if (HOME_HOSTNAMES.has(domain)) {
-    return rootMiddleware(req, ev);
+  if (req.nextUrl.pathname.startsWith("/dashboard")) {
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    if (!token?.sub) {
+      const params = new URLSearchParams({ next: req.nextUrl.href });
+      return NextResponse.redirect(
+        new URL(`/signin?${params.toString()}`, req.url),
+      );
+    }
   }
 }

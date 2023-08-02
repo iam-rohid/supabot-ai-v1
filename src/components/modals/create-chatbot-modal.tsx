@@ -16,8 +16,8 @@ import {
 } from "../ui/form";
 import { useForm } from "react-hook-form";
 import {
-  CreateChatbotSchemaData,
-  createChatbotSchema,
+  CreateProjectSchemaData,
+  createProjectSchema,
 } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
@@ -27,52 +27,52 @@ import type { ApiResponse } from "@/lib/types";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Chatbot } from "@/lib/schema/chatbots";
+import { Project } from "@/lib/schema/projects";
 import { UseModalReturning } from "./types";
 
-const createChatbotFn = async (data: CreateChatbotSchemaData) => {
-  const res = await fetch("/api/chatbots", {
+const createProjectFn = async (data: CreateProjectSchemaData) => {
+  const res = await fetch("/api/projects", {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const body: ApiResponse<Chatbot> = await res.json();
+  const body: ApiResponse<Project> = await res.json();
   if (!body.success) {
     throw body.error;
   }
   return body.data;
 };
 
-export function CreateChatbotModal({
+export function CreateProjectModal({
   open,
   onOpenChange,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const form = useForm<CreateChatbotSchemaData>({
-    resolver: zodResolver(createChatbotSchema),
+  const form = useForm<CreateProjectSchemaData>({
+    resolver: zodResolver(createProjectSchema),
   });
   const { toast } = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const handleSubmit = useCallback(
-    async (data: CreateChatbotSchemaData) => {
+    async (data: CreateProjectSchemaData) => {
       try {
-        const chatbot = await createChatbotFn(data);
-        toast({ title: "Chatbot created successfully!" });
-        queryClient.setQueryData<Chatbot[]>(["chatbots"], (chatbots) =>
-          chatbots ? [...chatbots, chatbot] : [chatbot],
+        const project = await createProjectFn(data);
+        toast({ title: "Project created successfully!" });
+        queryClient.setQueryData<Project[]>(["projects"], (projects) =>
+          projects ? [...projects, project] : [project],
         );
-        router.push(`/${chatbot.slug}`);
+        router.push(`/dashboard/${project.slug}`);
         onOpenChange(false);
       } catch (error) {
         toast({
           title:
-            typeof error === "string" ? error : "Failed to create chatbot!",
+            typeof error === "string" ? error : "Failed to create project!",
           variant: "destructive",
         });
       }
@@ -84,7 +84,7 @@ export function CreateChatbotModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Chatbot</DialogTitle>
+          <DialogTitle>Create Project</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -94,9 +94,9 @@ export function CreateChatbotModal({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Chatbot Name</FormLabel>
+                    <FormLabel>Project Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="My Chatbot" {...field} />
+                      <Input placeholder="My Bot" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -108,9 +108,9 @@ export function CreateChatbotModal({
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Chatbot Slug</FormLabel>
+                    <FormLabel>Project Slug</FormLabel>
                     <FormControl>
-                      <Input placeholder="my-chatbot" {...field} />
+                      <Input placeholder="my-bot" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -135,7 +135,7 @@ export function CreateChatbotModal({
                 {form.formState.isSubmitting && (
                   <Loader2 className="-ml-1 mr-2 h-4 w-4 animate-spin" />
                 )}
-                Create Chatbot
+                Create Project
               </Button>
             </DialogFooter>
           </form>
@@ -145,15 +145,11 @@ export function CreateChatbotModal({
   );
 }
 
-export const useCreateChatbotModal = (): UseModalReturning => {
+export const useCreateProjectModal = (): UseModalReturning => {
   const [open, setOpen] = useState(false);
 
-  const showModal = useCallback(() => {
-    setOpen(true);
-  }, []);
-
   const Modal = useCallback(
-    () => <CreateChatbotModal open={open} onOpenChange={setOpen} />,
+    () => <CreateProjectModal open={open} onOpenChange={setOpen} />,
     [open],
   );
 

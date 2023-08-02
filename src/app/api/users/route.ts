@@ -4,7 +4,7 @@ import { withAuth } from "../utilts";
 import { db } from "@/lib/drizzle";
 import { type User, usersTable } from "@/lib/schema/users";
 import { and, eq } from "drizzle-orm";
-import { chatbotUsersTable } from "@/lib/schema/chatbot-users";
+import { projectUsersTable } from "@/lib/schema/project-users";
 
 export const PUT = withAuth(async (req, ctx) => {
   try {
@@ -45,21 +45,21 @@ export const PUT = withAuth(async (req, ctx) => {
 });
 
 export const DELETE = withAuth(async (req, ctx) => {
-  const ownerOfChatbots = await db
+  const ownerOfProjects = await db
     .select()
-    .from(chatbotUsersTable)
+    .from(projectUsersTable)
     .where(
       and(
-        eq(chatbotUsersTable.userId, ctx.session.user.id),
-        eq(chatbotUsersTable.role, "owner"),
+        eq(projectUsersTable.userId, ctx.session.user.id),
+        eq(projectUsersTable.role, "owner"),
       ),
     );
 
-  if (ownerOfChatbots.length) {
+  if (ownerOfProjects.length) {
     return NextResponse.json({
       success: false,
       error:
-        "You must transfer ownership of your chatbots or delete them before you can delete your account.",
+        "You must transfer ownership of your projects or delete them before you can delete your account.",
     } satisfies ApiResponse);
   }
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createChatbotSchema = z.object({
+export const createProjectSchema = z.object({
   name: z
     .string({ required_error: "Name is required" })
     .min(1, "Name is required")
@@ -12,4 +12,4 @@ export const createChatbotSchema = z.object({
   description: z.string().max(300).optional(),
 });
 
-export type CreateChatbotSchemaData = z.infer<typeof createChatbotSchema>;
+export type CreateProjectSchemaData = z.infer<typeof createProjectSchema>;

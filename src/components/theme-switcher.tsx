@@ -12,16 +12,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useTheme } from "./theme-provider";
+import { Skeleton } from "./ui/skeleton";
 
 export default function ThemeSwitcher() {
   const { isLoading, setTheme, theme } = useTheme();
 
   if (isLoading) {
-    return (
-      <div className="flex h-10 w-10 items-center justify-center">
-        <div className="h-8 w-8 rounded-full bg-muted" />
-      </div>
-    );
+    return <Skeleton className="h-10 w-10" />;
   }
 
   return (
