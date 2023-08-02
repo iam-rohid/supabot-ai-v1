@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type ReactNode, createContext, useContext, useMemo } from "react";
 import type { ApiResponse } from "@/lib/types";
-import { Project } from "@/lib/schema/chatbots";
+import { Project } from "@/lib/schema/projects";
 import { useSession } from "next-auth/react";
 
 export type ProjectsContextType = {
@@ -14,7 +14,7 @@ export type ProjectsContextType = {
 export const ProjectsContext = createContext<ProjectsContextType | null>(null);
 
 const fetchProjectsFn = async () => {
-  const res = await fetch("/api/chatbots");
+  const res = await fetch("/api/projects");
   const body: ApiResponse<Project[]> = await res.json();
   if (!body.success) {
     throw body.error;

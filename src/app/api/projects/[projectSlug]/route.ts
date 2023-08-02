@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { withProject } from "./utils";
-import { Project, porjectsTable } from "@/lib/schema/chatbots";
+import { Project, porjectsTable } from "@/lib/schema/projects";
 import { db } from "@/lib/drizzle";
 import { eq } from "drizzle-orm";
 
@@ -24,7 +24,7 @@ export const PUT = withProject(
           ...(typeof description === "string" ? { description } : {}),
           updatedAt: new Date(),
         })
-        .where(eq(porjectsTable.slug, ctx.params.slug))
+        .where(eq(porjectsTable.slug, ctx.params.projectSlug))
         .returning();
       return NextResponse.json({
         success: true,
@@ -49,7 +49,7 @@ export const DELETE = withProject(
     try {
       const [project] = await db
         .delete(porjectsTable)
-        .where(eq(porjectsTable.slug, ctx.params.slug))
+        .where(eq(porjectsTable.slug, ctx.params.projectSlug))
         .returning();
       return NextResponse.json({
         success: true,

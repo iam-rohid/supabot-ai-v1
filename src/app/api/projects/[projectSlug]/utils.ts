@@ -7,14 +7,14 @@ import {
   withAuth,
   WithAuthContext,
 } from "../../utilts";
-import { Project, porjectsTable } from "@/lib/schema/chatbots";
-import { ProjectUser, projectUsersTable } from "@/lib/schema/chatbot-users";
+import { Project, porjectsTable } from "@/lib/schema/projects";
+import { ProjectUser, projectUsersTable } from "@/lib/schema/project-users";
 import { db } from "@/lib/drizzle";
 import { and, eq } from "drizzle-orm";
 
 export type WithProjectContext = {
   params: {
-    slug: string;
+    projectSlug: string;
   };
   project: Project;
 } & WithAuthContext;
@@ -46,7 +46,7 @@ export const withProject = <C extends WithProjectContext>(
       )
       .where(
         and(
-          eq(porjectsTable.slug, ctx.params.slug),
+          eq(porjectsTable.slug, ctx.params.projectSlug),
           eq(projectUsersTable.userId, ctx.session.user.id),
         ),
       );

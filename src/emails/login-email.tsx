@@ -1,4 +1,4 @@
-import { APP_NAME, HOME_DOMAIN } from "../src/lib/constants";
+import { APP_NAME, HOME_DOMAIN } from "../lib/constants";
 import {
   Body,
   Link,

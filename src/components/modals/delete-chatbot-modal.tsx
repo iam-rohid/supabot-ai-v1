@@ -16,11 +16,11 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Project } from "@/lib/schema/chatbots";
+import { Project } from "@/lib/schema/projects";
 import { UseModalReturning } from "./types";
 
 const deleteProjectFn = async (slug: string) => {
-  const res = await fetch(`/api/chatbots/${slug}`, {
+  const res = await fetch(`/api/projects/${slug}`, {
     method: "DELETE",
   });
   const body: ApiErrorResponse = await res.json();
@@ -34,13 +34,13 @@ const VERIFY_MESSAGE = "confirm delete project";
 export function DeleteProjectModal({
   open,
   onOpenChange,
-  project,
+  projectSlug,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  project: Project;
+  projectSlug: string;
 }) {
-  const [projectSlug, setProjectSlug] = useState("");
+  const [projectSlugText, setProjectSlugText] = useState("");
   const [verifyText, setVerifyText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
@@ -50,15 +50,15 @@ export function DeleteProjectModal({
   const handleDelete = useCallback(async () => {
     if (
       isDeleting ||
-      !(projectSlug === project.slug && verifyText === VERIFY_MESSAGE)
+      !(projectSlugText === projectSlug && verifyText === VERIFY_MESSAGE)
     ) {
       return;
     }
     setIsDeleting(true);
     try {
-      await deleteProjectFn(project.slug);
+      await deleteProjectFn(projectSlug);
       queryClient.setQueryData<Project[]>(["projects"], (projects) =>
-        projects ? projects.filter((bot) => bot.slug !== project.slug) : [],
+        projects ? projects.filter((bot) => bot.slug !== projectSlug) : [],
       );
       toast({ title: "Project deleted successfully!" });
       router.push("/dashboard");
@@ -71,8 +71,8 @@ export function DeleteProjectModal({
     }
   }, [
     isDeleting,
+    projectSlugText,
     projectSlug,
-    project.slug,
     verifyText,
     queryClient,
     toast,
@@ -92,11 +92,11 @@ export function DeleteProjectModal({
         <div className="grid gap-6">
           <fieldset className="grid gap-2">
             <Label htmlFor="verify">
-              Enter the project slug <strong>{project.slug}</strong> to continue
+              Enter the project slug <strong>{projectSlug}</strong> to continue
             </Label>
             <Input
-              value={projectSlug}
-              onChange={(e) => setProjectSlug(e.currentTarget.value)}
+              value={projectSlugText}
+              onChange={(e) => setProjectSlugText(e.currentTarget.value)}
             />
           </fieldset>
           <fieldset className="grid gap-2">
@@ -116,7 +116,9 @@ export function DeleteProjectModal({
           <Button
             disabled={
               isDeleting ||
-              !(verifyText === VERIFY_MESSAGE && projectSlug === project.slug)
+              !(
+                verifyText === VERIFY_MESSAGE && projectSlugText === projectSlug
+              )
             }
             onClick={handleDelete}
           >
@@ -131,7 +133,11 @@ export function DeleteProjectModal({
   );
 }
 
-export const useDeleteProjectModal = (project: Project): UseModalReturning => {
+export const useDeleteProjectModal = ({
+  projectSlug,
+}: {
+  projectSlug: string;
+}): UseModalReturning => {
   const [open, setOpen] = useState(false);
 
   const Modal = useCallback(
@@ -139,10 +145,10 @@ export const useDeleteProjectModal = (project: Project): UseModalReturning => {
       <DeleteProjectModal
         open={open}
         onOpenChange={setOpen}
-        project={project}
+        projectSlug={projectSlug}
       />
     ),
-    [project, open],
+    [projectSlug, open],
   );
 
   return [open, setOpen, Modal];

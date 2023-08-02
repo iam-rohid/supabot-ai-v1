@@ -3,12 +3,6 @@ import { APP_NAME } from "@/lib/constants";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import NewProjectButton from "@/components/new-chatbot-button";
-import { db } from "@/lib/drizzle";
-import { porjectsTable } from "@/lib/schema/chatbots";
-import { desc, eq } from "drizzle-orm";
-import { projectUsersTable } from "@/lib/schema/chatbot-users";
-import { Session, getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import {
@@ -21,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
+import { getAllProjects } from "@/utils/projects";
 
 export const metadata: Metadata = {
   title: `Projects | ${APP_NAME}`,
@@ -52,19 +47,7 @@ function ProjectListLoadingSkeletion() {
 }
 
 async function ProjectList() {
-  const session = (await getServerSession(authOptions)) as Session;
-  const projects = await db
-    .select({
-      id: porjectsTable.id,
-      name: porjectsTable.name,
-      slug: porjectsTable.slug,
-      description: porjectsTable.description,
-      updatedAt: porjectsTable.updatedAt,
-    })
-    .from(projectUsersTable)
-    .innerJoin(porjectsTable, eq(porjectsTable.id, projectUsersTable.projectId))
-    .where(eq(projectUsersTable.userId, session.user.id))
-    .orderBy(desc(porjectsTable.updatedAt));
+  const projects = await getAllProjects();
 
   if (projects.length === 0) {
     return (

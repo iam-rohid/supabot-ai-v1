@@ -5,9 +5,9 @@ import {
 } from "@/lib/validations";
 import { NextResponse } from "next/server";
 import { withAuth } from "../utilts";
-import { Project, porjectsTable } from "@/lib/schema/chatbots";
+import { Project, porjectsTable } from "@/lib/schema/projects";
 import { db } from "@/lib/drizzle";
-import { projectUsersTable } from "@/lib/schema/chatbot-users";
+import { projectUsersTable } from "@/lib/schema/project-users";
 import { eq } from "drizzle-orm";
 
 export const GET = withAuth(async (req, ctx) => {

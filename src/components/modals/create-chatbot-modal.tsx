@@ -27,11 +27,11 @@ import type { ApiResponse } from "@/lib/types";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Project } from "@/lib/schema/chatbots";
+import { Project } from "@/lib/schema/projects";
 import { UseModalReturning } from "./types";
 
 const createProjectFn = async (data: CreateProjectSchemaData) => {
-  const res = await fetch("/api/chatbots", {
+  const res = await fetch("/api/projects", {
     method: "POST",
     body: JSON.stringify(data),
     headers: {

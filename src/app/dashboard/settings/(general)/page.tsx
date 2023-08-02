@@ -1,11 +1,14 @@
-import { type Session, getServerSession } from "next-auth";
 import AccountDeleteCard from "./account-delete-card";
 import AccountEmailCard from "./account-email-card";
 import AccountNameCard from "./account-name-card";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/utils/session";
 
 export default async function UserSettings() {
-  const session = (await getServerSession(authOptions)) as Session;
+  const session = await getSession();
+
+  if (!session) {
+    throw "UNAUTHORIZED";
+  }
 
   return (
     <div className="grid gap-8">

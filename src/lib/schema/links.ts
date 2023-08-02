@@ -7,7 +7,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { porjectsTable } from "./chatbots";
+import { porjectsTable } from "./projects";
 import type { InferModel } from "drizzle-orm";
 
 export const linkTrainingStatus = pgEnum("link_training_status", [

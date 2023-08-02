@@ -1,25 +1,25 @@
-import ProjectNameCard from "./chatbot-name-card";
-import ProjectSlugCard from "./chatbot-slug-card";
-import ProjectDeleteCard from "./chatbot-delete-card";
-import { db } from "@/lib/drizzle";
-import { porjectsTable } from "@/lib/schema/chatbots";
-import { eq } from "drizzle-orm";
+import ProjectNameCard from "./project-name-card";
+import ProjectSlugCard from "./project-slug-card";
+import ProjectDeleteCard from "./project-delete-card";
+import { getProjectBySlug } from "@/utils/projects";
+import { notFound } from "next/navigation";
 
 export default async function GeneralProjectSettings({
   params,
 }: {
   params: { projectSlug: string };
 }) {
-  const [project] = await db
-    .select()
-    .from(porjectsTable)
-    .where(eq(porjectsTable.slug, params.projectSlug));
+  const project = await getProjectBySlug(params.projectSlug);
+
+  if (!project) {
+    notFound();
+  }
 
   return (
     <div className="grid gap-8">
-      <ProjectNameCard project={project} />
-      <ProjectSlugCard project={project} />
-      <ProjectDeleteCard project={project} />
+      <ProjectNameCard projectName={project.name} />
+      <ProjectSlugCard />
+      <ProjectDeleteCard />
     </div>
   );
 }

@@ -12,7 +12,7 @@ import { LinkModel, linksTable } from "@/lib/schema/links";
 import { and, eq } from "drizzle-orm";
 
 export type WithLinkContext = {
-  params: { slug: string; link_id: string };
+  params: { slug: string; linkId: string };
   link: LinkModel;
 } & WithProjectContext;
 
@@ -31,7 +31,7 @@ export const withLink = <Ctx extends WithLinkContext>(
       .from(linksTable)
       .where(
         and(
-          eq(linksTable.id, ctx.params.link_id),
+          eq(linksTable.id, ctx.params.linkId),
           eq(linksTable.projectId, ctx.project.id),
         ),
       );

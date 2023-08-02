@@ -21,12 +21,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { APP_NAME } from "@/lib/constants";
-import { Project } from "@/lib/schema/chatbots";
+import { Project } from "@/lib/schema/projects";
 import type { ApiResponse } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -40,10 +40,11 @@ const updateSlugSchema = z.object({
 
 type UpdateSlugFormData = z.infer<typeof updateSlugSchema>;
 
-export default function ProjectSlugCard({ project }: { project: Project }) {
+export default function ProjectSlugCard() {
+  const { projectSlug } = useParams() as { projectSlug: string };
   const form = useForm<UpdateSlugFormData>({
     resolver: zodResolver(updateSlugSchema),
-    defaultValues: { slug: project.slug },
+    defaultValues: { slug: projectSlug },
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -52,7 +53,7 @@ export default function ProjectSlugCard({ project }: { project: Project }) {
   const handleSubmit = useCallback(
     async (data: UpdateSlugFormData) => {
       try {
-        const res = await fetch(`/api/chatbots/${project.slug}`, {
+        const res = await fetch(`/api/projects/${projectSlug}`, {
           method: "PUT",
           body: JSON.stringify(data),
           headers: {
@@ -86,7 +87,7 @@ export default function ProjectSlugCard({ project }: { project: Project }) {
         });
       }
     },
-    [project.slug, queryClient, router, toast],
+    [projectSlug, queryClient, router, toast],
   );
 
   return (

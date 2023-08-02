@@ -10,11 +10,14 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { APP_NAME } from "@/lib/constants";
-import { Project } from "@/lib/schema/chatbots";
+import { Project } from "@/lib/schema/projects";
+import { useParams } from "next/navigation";
 
-export default function ProjectDeleteCard({ project }: { project: Project }) {
+export default function ProjectDeleteCard() {
+  const { projectSlug } = useParams() as { projectSlug: string };
   const [, setDeleteProjectModalOpen, DeleteProjectModal] =
-    useDeleteProjectModal(project);
+    useDeleteProjectModal({ projectSlug });
+
   return (
     <>
       <Card className="border-destructive">

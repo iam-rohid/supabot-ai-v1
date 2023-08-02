@@ -5,7 +5,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { porjectsTable } from "./chatbots";
+import { porjectsTable } from "./projects";
 import { usersTable } from "./users";
 import type { InferModel } from "drizzle-orm";
 

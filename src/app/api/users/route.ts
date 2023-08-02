@@ -4,7 +4,7 @@ import { withAuth } from "../utilts";
 import { db } from "@/lib/drizzle";
 import { type User, usersTable } from "@/lib/schema/users";
 import { and, eq } from "drizzle-orm";
-import { projectUsersTable } from "@/lib/schema/chatbot-users";
+import { projectUsersTable } from "@/lib/schema/project-users";
 
 export const PUT = withAuth(async (req, ctx) => {
   try {

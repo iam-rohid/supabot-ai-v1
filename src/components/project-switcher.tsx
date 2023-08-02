@@ -1,6 +1,6 @@
 "use client";
 
-import { useProjects } from "@/components/chatbots-provider";
+import { useProjects } from "@/components/projects-provider";
 import { useCreateProjectModal } from "@/components/modals/create-chatbot-modal";
 import { Button } from "@/components/ui/button";
 import {

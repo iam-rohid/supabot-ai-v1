@@ -31,7 +31,7 @@ export default function LinksList() {
   const linksQuery = useQuery({
     queryKey: ["links", projectSlug],
     queryFn: async () => {
-      const res = await fetch(`/api/chatbots/${projectSlug}/links`);
+      const res = await fetch(`/api/projects/${projectSlug}/links`);
       const data: ApiResponse<LinkModel[]> = await res.json();
       if (!data.success) {
         throw data.error;
@@ -55,7 +55,7 @@ export default function LinksList() {
             ),
         );
         const res = await fetch(
-          `/api/chatbots/${projectSlug}/links/${link.id}/retrain`,
+          `/api/projects/${projectSlug}/links/${link.id}/retrain`,
           {
             method: "POST",
           },
@@ -99,7 +99,7 @@ export default function LinksList() {
           (links) => links?.filter((oldLink) => oldLink.id !== link.id),
         );
         const res = await fetch(
-          `/api/chatbots/${projectSlug}/links/${link.id}`,
+          `/api/projects/${projectSlug}/links/${link.id}`,
           {
             method: "DELETE",
           },

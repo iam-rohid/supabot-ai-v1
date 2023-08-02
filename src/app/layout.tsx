@@ -2,8 +2,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import Providers from "./providers";
 import { APP_NAME, SYSTEM_THEME } from "@/lib/constants";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/utils/session";
 
 export const metadata: Metadata = {
   title: APP_NAME,
@@ -14,7 +13,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
   return (
     <html lang="en">
       <head>

@@ -58,7 +58,7 @@ const AddSingleLink = ({
   const handleSubmit = useCallback(
     async (data: CreateLinkData) => {
       try {
-        const res = await fetch(`/api/chatbots/${projectSlug}/links`, {
+        const res = await fetch(`/api/projects/${projectSlug}/links`, {
           method: "POST",
           body: JSON.stringify({
             urls: [data.url],

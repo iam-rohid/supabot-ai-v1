@@ -6,7 +6,7 @@ import UserButton from "@/components/user-button";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import ProjectSwitcher from "@/components/chatbot-switcher";
+import ProjectSwitcher from "@/components/project-switcher";
 import type { MenuItem } from "@/lib/types";
 
 export default function AppHeader() {

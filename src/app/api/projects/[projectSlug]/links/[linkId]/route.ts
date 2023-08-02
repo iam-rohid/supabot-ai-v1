@@ -16,7 +16,7 @@ export const DELETE = withLink(async (req, ctx) => {
   try {
     const [link] = await db
       .delete(linksTable)
-      .where(eq(linksTable.id, ctx.params.link_id))
+      .where(eq(linksTable.id, ctx.params.linkId))
       .returning();
     return NextResponse.json({
       success: true,

@@ -3,9 +3,9 @@ import { parseReq } from "./utils";
 import { getToken } from "next-auth/jwt";
 import { AUTH_PATHNAMES, RESURVED_APP_PATH_KEYS } from "../constants";
 import { db } from "../drizzle";
-import { porjectsTable } from "../schema/chatbots";
+import { porjectsTable } from "../schema/projects";
 import { and, eq } from "drizzle-orm";
-import { projectUsersTable } from "../schema/chatbot-users";
+import { projectUsersTable } from "../schema/project-users";
 
 export async function appMiddleware(req: NextRequest, ev: NextFetchEvent) {
   const { pathname, pathKey, searchParams } = parseReq(req);

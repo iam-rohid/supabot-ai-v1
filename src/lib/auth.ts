@@ -1,13 +1,13 @@
 import { type AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
-import { sendEmail } from "./emails";
-import LoginLink from "../../emails/login-email";
-import { APP_NAME } from "./constants";
+import { APP_NAME, EMAIL_DOMAIN } from "./constants";
 import { db } from "./drizzle";
 import { usersTable } from "./schema/users";
 import { eq } from "drizzle-orm";
 import { drizzleAdapter } from "./drizzle-adapter";
+import LoginLink from "@/emails/login-email";
+import { sendEmail } from "./emails";
 
 export const authOptions: AuthOptions = {
   adapter: drizzleAdapter,

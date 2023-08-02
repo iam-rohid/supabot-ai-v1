@@ -49,7 +49,7 @@ export const POST = withProject(async (req, ctx) => {
     // await Promise.all(
     //   links.map(async (link) =>
     //     fetch(
-    //       `http://app.localhost:3000/api/chatbots/${ctx.project.slug}/links/${link.id}/retrain`,
+    //       `http://app.localhost:3000/api/projects/${ctx.project.slug}/links/${link.id}/retrain`,
     //       {
     //         method: "POST",
     //       },
