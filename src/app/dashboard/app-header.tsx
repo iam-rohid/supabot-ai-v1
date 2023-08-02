@@ -10,7 +10,7 @@ import ProjectSwitcher from "@/components/chatbot-switcher";
 import type { MenuItem } from "@/lib/types";
 
 export default function AppHeader() {
-  const { project_slug } = useParams();
+  const { projectSlug } = useParams();
 
   return (
     <header className="sticky top-0 z-20 border-b bg-card text-card-foreground">
@@ -29,19 +29,19 @@ export default function AppHeader() {
       </div>
       <NavBar
         menuList={
-          typeof project_slug === "string"
+          typeof projectSlug === "string"
             ? [
                 {
-                  href: `/dashboard/${project_slug}`,
+                  href: `/dashboard/${projectSlug}`,
                   label: "Overview",
                   exactMatch: true,
                 },
                 {
-                  href: `/dashboard/${project_slug}/links`,
+                  href: `/dashboard/${projectSlug}/links`,
                   label: "Links",
                 },
                 {
-                  href: `/dashboard/${project_slug}/settings`,
+                  href: `/dashboard/${projectSlug}/settings`,
                   label: "Settings",
                 },
               ]

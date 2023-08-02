@@ -4,10 +4,10 @@ import type { ReactNode } from "react";
 
 export default function ProjectSettingsPage({
   children,
-  params: { project_slug },
+  params: { projectSlug },
 }: {
   children: ReactNode;
-  params: { project_slug: string };
+  params: { projectSlug: string };
 }) {
   return (
     <main>
@@ -16,16 +16,16 @@ export default function ProjectSettingsPage({
         <Sidebar
           items={[
             {
-              href: `/dashboard/${project_slug}/settings`,
+              href: `/dashboard/${projectSlug}/settings`,
               label: "General",
               exactMatch: true,
             },
             {
-              href: `/dashboard/${project_slug}/settings/billing`,
+              href: `/dashboard/${projectSlug}/settings/billing`,
               label: "Billing",
             },
             {
-              href: `/dashboard/${project_slug}/settings/people`,
+              href: `/dashboard/${projectSlug}/settings/people`,
               label: "People",
             },
           ]}

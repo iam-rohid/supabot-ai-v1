@@ -27,11 +27,11 @@ import { useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function LinksList() {
-  const { project_slug } = useParams() as { project_slug: string };
+  const { projectSlug } = useParams() as { projectSlug: string };
   const linksQuery = useQuery({
-    queryKey: ["links", project_slug],
+    queryKey: ["links", projectSlug],
     queryFn: async () => {
-      const res = await fetch(`/api/chatbots/${project_slug}/links`);
+      const res = await fetch(`/api/chatbots/${projectSlug}/links`);
       const data: ApiResponse<LinkModel[]> = await res.json();
       if (!data.success) {
         throw data.error;
@@ -46,7 +46,7 @@ export default function LinksList() {
     async (link: LinkModel) => {
       try {
         queryClient.setQueryData<LinkModel[]>(
-          ["links", project_slug],
+          ["links", projectSlug],
           (links) =>
             links?.map((oldLink) =>
               oldLink.id === link.id
@@ -55,7 +55,7 @@ export default function LinksList() {
             ),
         );
         const res = await fetch(
-          `/api/chatbots/${project_slug}/links/${link.id}/retrain`,
+          `/api/chatbots/${projectSlug}/links/${link.id}/retrain`,
           {
             method: "POST",
           },
@@ -66,7 +66,7 @@ export default function LinksList() {
         }
         toast({ title: data.message || "Link retrain success" });
         queryClient.setQueryData<LinkModel[]>(
-          ["links", project_slug],
+          ["links", projectSlug],
           (links) =>
             links?.map((oldLink) =>
               oldLink.id === link.id ? { ...oldLink, ...data.data } : oldLink,
@@ -74,7 +74,7 @@ export default function LinksList() {
         );
       } catch (error) {
         queryClient.setQueryData<LinkModel[]>(
-          ["links", project_slug],
+          ["links", projectSlug],
           (links) =>
             links?.map((oldLink) =>
               oldLink.id === link.id
@@ -88,18 +88,18 @@ export default function LinksList() {
         });
       }
     },
-    [project_slug, queryClient, toast],
+    [projectSlug, queryClient, toast],
   );
 
   const deleteLink = useCallback(
     async (link: LinkModel) => {
       try {
         queryClient.setQueryData<LinkModel[]>(
-          ["links", project_slug],
+          ["links", projectSlug],
           (links) => links?.filter((oldLink) => oldLink.id !== link.id),
         );
         const res = await fetch(
-          `/api/chatbots/${project_slug}/links/${link.id}`,
+          `/api/chatbots/${projectSlug}/links/${link.id}`,
           {
             method: "DELETE",
           },
@@ -110,14 +110,14 @@ export default function LinksList() {
         }
         toast({ title: data.message || "Link delete success" });
       } catch (error) {
-        queryClient.invalidateQueries(["links", project_slug]);
+        queryClient.invalidateQueries(["links", projectSlug]);
         toast({
           title: typeof error === "string" ? error : "Failed to delete link",
           variant: "destructive",
         });
       }
     },
-    [project_slug, queryClient, toast],
+    [projectSlug, queryClient, toast],
   );
 
   if (linksQuery.isLoading) {

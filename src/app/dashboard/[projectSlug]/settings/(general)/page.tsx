@@ -8,12 +8,12 @@ import { eq } from "drizzle-orm";
 export default async function GeneralProjectSettings({
   params,
 }: {
-  params: { project_slug: string };
+  params: { projectSlug: string };
 }) {
   const [project] = await db
     .select()
     .from(porjectsTable)
-    .where(eq(porjectsTable.slug, params.project_slug));
+    .where(eq(porjectsTable.slug, params.projectSlug));
 
   return (
     <div className="grid gap-8">

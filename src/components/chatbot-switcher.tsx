@@ -23,17 +23,17 @@ import { useMemo } from "react";
 
 export default function ProjectSwitcher() {
   const { data } = useSession();
-  const { project_slug } = useParams();
+  const { projectSlug } = useParams();
   const { projects, isLoading } = useProjects();
   const [, setCreateProjectModalOpen, CreateProjectModal] =
     useCreateProjectModal();
 
   const currentProject = useMemo(
     () =>
-      typeof project_slug === "string"
-        ? projects.find((item) => item.slug === project_slug)
+      typeof projectSlug === "string"
+        ? projects.find((item) => item.slug === projectSlug)
         : null,
-    [project_slug, projects],
+    [projectSlug, projects],
   );
 
   if (isLoading || !data) {
