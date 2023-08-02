@@ -8,6 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { usersTable } from "./users";
 import type { InferModel } from "drizzle-orm";
+import { ProviderType } from "next-auth/providers/index";
 
 export const accountsTable = pgTable(
   "accounts",
@@ -18,9 +19,7 @@ export const accountsTable = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => usersTable.id, { onDelete: "cascade" }),
-    type: varchar("type", {
-      enum: ["oauth", "email", "credentials"],
-    }).notNull(),
+    type: varchar("type", { length: 80 }).$type<ProviderType>().notNull(),
     provider: varchar("provider", { length: 80 }).notNull(),
     providerAccountId: varchar("provider_account_id", { length: 80 }).notNull(),
     refreshToken: varchar("refresh_token", { length: 255 }),

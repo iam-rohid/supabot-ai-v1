@@ -90,6 +90,9 @@ export const drizzleAdapter: NextAuthOptions["adapter"] = {
         userId: data.userId,
       })
       .returning();
+    if (!account) {
+      throw "Failed to link account";
+    }
     return {
       access_token: account.accessToken || undefined,
       expires_at: account.expiresAt || undefined,
@@ -122,7 +125,7 @@ export const drizzleAdapter: NextAuthOptions["adapter"] = {
           eq(accountsTable.providerAccountId, providerAccountId),
         ),
       );
-    return user;
+    return user || null;
   },
   unlinkAccount: async ({ provider, providerAccountId }) => {
     const [account] = await db
@@ -134,6 +137,11 @@ export const drizzleAdapter: NextAuthOptions["adapter"] = {
         ),
       )
       .returning();
+
+    if (!account) {
+      throw "Failed to unlink account";
+    }
+
     return {
       access_token: account.accessToken || undefined,
       expires_at: account.expiresAt || undefined,
