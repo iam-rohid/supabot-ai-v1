@@ -58,7 +58,7 @@ export default function UserButton() {
       <DropdownMenuContent side="bottom" align="end">
         <div className="p-3">
           <p className="font-medium leading-none">
-            {data.user.name || "No name"}
+            {data.user.name || data.user.email}
           </p>
           <p className="text-sm text-muted-foreground">{data.user.email}</p>
         </div>

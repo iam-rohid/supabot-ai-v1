@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { drizzleAdapter } from "./drizzle-adapter";
 import LoginLink from "@/emails/login-email";
 import { sendEmail } from "./emails";
+import { createHash } from "crypto";
 
 export const authOptions: AuthOptions = {
   adapter: drizzleAdapter,
@@ -97,4 +98,10 @@ export const authOptions: AuthOptions = {
       }
     },
   },
+};
+
+export const hashToken = (token: string) => {
+  return createHash("sha256")
+    .update(`${token}${process.env.NEXTAUTH_SECRET}`)
+    .digest("hex");
 };

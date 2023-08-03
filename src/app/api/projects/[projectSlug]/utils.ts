@@ -11,12 +11,19 @@ import { Project, projectsTable } from "@/lib/schema/projects";
 import { ProjectUser, projectUsersTable } from "@/lib/schema/project-users";
 import { db } from "@/lib/drizzle";
 import { and, eq } from "drizzle-orm";
+import {
+  ProjectInvitation,
+  projectInvitationsTable,
+} from "@/lib/schema/project-invitations";
 
 export type WithProjectContext = {
   params: {
     projectSlug: string;
   };
-  project: Project;
+  projectId: string;
+  projectName: Project["name"];
+  memberRole?: ProjectUser["role"];
+  invitation?: ProjectInvitation;
 } & WithAuthContext;
 
 export type WithProjectHandlerProps = WithAuthHandlerProps & {};
@@ -32,26 +39,30 @@ export const withProject = <C extends WithProjectContext>(
     const [project] = await db
       .select({
         id: projectsTable.id,
-        createdAt: projectsTable.createdAt,
-        updatedAt: projectsTable.updatedAt,
         name: projectsTable.name,
-        slug: projectsTable.slug,
-        description: projectsTable.description,
-        role: projectUsersTable.role,
       })
       .from(projectsTable)
-      .innerJoin(
-        projectUsersTable,
-        eq(projectUsersTable.projectId, projectsTable.id),
-      )
+      .where(eq(projectsTable.slug, ctx.params.projectSlug));
+
+    const [member] = await db
+      .select({ role: projectUsersTable.role })
+      .from(projectUsersTable)
       .where(
         and(
-          eq(projectsTable.slug, ctx.params.projectSlug),
+          eq(projectUsersTable.projectId, project.id),
           eq(projectUsersTable.userId, ctx.session.user.id),
         ),
       );
-
-    if (!project) {
+    const [invitation] = await db
+      .select()
+      .from(projectInvitationsTable)
+      .where(
+        and(
+          eq(projectInvitationsTable.email, ctx.session.user.email!),
+          eq(projectInvitationsTable.projectId, project.id),
+        ),
+      );
+    if (!member && !invitation) {
       return NextResponse.json({
         success: false,
         error: "Project not found!",
@@ -59,9 +70,10 @@ export const withProject = <C extends WithProjectContext>(
     }
 
     if (
+      member &&
       extraProps.requireRoles &&
       extraProps.requireRoles.length > 0 &&
-      !new Set(extraProps.requireRoles).has(project.role)
+      !new Set(extraProps.requireRoles).has(member.role)
     ) {
       return NextResponse.json({
         success: false,
@@ -69,7 +81,10 @@ export const withProject = <C extends WithProjectContext>(
       } satisfies ApiResponse);
     }
 
-    ctx.project = project;
+    ctx.projectId = project.id;
+    ctx.projectName = project.name;
+    ctx.memberRole = member?.role;
+    ctx.invitation = invitation;
 
     return handler(req, ctx);
   });

@@ -32,7 +32,7 @@ export const withLink = <Ctx extends WithLinkContext>(
       .where(
         and(
           eq(linksTable.id, ctx.params.linkId),
-          eq(linksTable.projectId, ctx.project.id),
+          eq(linksTable.projectId, ctx.projectId),
         ),
       );
     if (!link) {

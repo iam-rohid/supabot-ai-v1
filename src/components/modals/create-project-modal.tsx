@@ -1,3 +1,5 @@
+"use client";
+
 import { Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -56,6 +58,11 @@ export function CreateProjectModal({
   const { data: session } = useSession();
   const form = useForm<CreateProjectSchemaData>({
     resolver: zodResolver(createProjectSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      slug: "",
+    },
   });
   const { toast } = useToast();
   const router = useRouter();

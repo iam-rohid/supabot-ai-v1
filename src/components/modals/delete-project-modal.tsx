@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";

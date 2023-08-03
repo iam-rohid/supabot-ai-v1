@@ -56,7 +56,7 @@ export default function ProjectSwitcher() {
               height={256}
               alt="Project logo"
             />
-            {currentProject?.name || data.user.name || "No Name"}
+            {currentProject?.name || data.user.name || data.user.email}
             <ChevronsUpDownIcon size={20} className="ml-2" />
           </Button>
         </DropdownMenuTrigger>
@@ -73,7 +73,7 @@ export default function ProjectSwitcher() {
                   className="mr-2 h-5 w-5 rounded-full object-cover"
                 />
                 <span className="flex-1 truncate">
-                  {data.user.name || "No name"}
+                  {data.user.name || data.user.email}
                 </span>
                 <CheckIcon
                   size={20}

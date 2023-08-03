@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useState } from "react";
 import {
   Dialog,
@@ -51,6 +53,9 @@ const AddSingleLink = ({
 }) => {
   const form = useForm<CreateLinkData>({
     resolver: zodResolver(createLinkSchema),
+    defaultValues: {
+      url: "",
+    },
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();

@@ -36,4 +36,3 @@ export const projectUsersTable = pgTable(
 );
 
 export type ProjectUser = InferModel<typeof projectUsersTable>;
-export type NewProjectUser = InferModel<typeof projectUsersTable, "insert">;

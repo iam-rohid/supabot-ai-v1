@@ -11,7 +11,7 @@ export const GET = withProject(async (req, ctx) => {
     const links = await db
       .select()
       .from(linksTable)
-      .where(eq(linksTable.projectId, ctx.project.id))
+      .where(eq(linksTable.projectId, ctx.projectId))
       .orderBy(desc(linksTable.lastTrainedAt), desc(linksTable.updatedAt));
 
     return NextResponse.json({
@@ -39,7 +39,7 @@ export const POST = withProject(async (req, ctx) => {
       .values(
         urlList.map((url) => ({
           url,
-          projectId: ctx.project.id,
+          projectId: ctx.projectId,
         })),
       )
       .returning()

@@ -4,6 +4,7 @@ import { db } from "./lib/drizzle";
 import { projectUsersTable } from "./lib/schema/project-users";
 import { and, eq } from "drizzle-orm";
 import { projectsTable } from "./lib/schema/projects";
+import { projectInvitationsTable } from "./lib/schema/project-invitations";
 
 export const config = {
   matcher: [
@@ -26,8 +27,7 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
       req,
       secret: process.env.NEXTAUTH_SECRET,
     });
-    const userId = token?.sub;
-    if (!userId) {
+    if (!(token?.sub && token.email)) {
       const params = new URLSearchParams({ next: req.nextUrl.href });
       return NextResponse.redirect(
         new URL(`/signin?${params.toString()}`, req.url),
@@ -37,20 +37,39 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
     const key = req.nextUrl.pathname.split("/")[2];
     const presurvedKeys = new Set(["settings", "project-not-found"]);
     if (key && !presurvedKeys.has(key)) {
-      const projects = await db
+      const [project] = await db
+        .select({ id: projectsTable.id })
+        .from(projectsTable)
+        .where(eq(projectsTable.slug, key));
+      if (!project) {
+        return NextResponse.rewrite(
+          new URL("/dashboard/project-not-found", req.url),
+        );
+      }
+
+      const [projectUser] = await db
         .select({})
         .from(projectUsersTable)
-        .innerJoin(
-          projectsTable,
-          eq(projectsTable.id, projectUsersTable.projectId),
-        )
         .where(
           and(
-            eq(projectUsersTable.userId, userId),
-            eq(projectsTable.slug, key),
+            eq(projectUsersTable.projectId, project.id),
+            eq(projectUsersTable.userId, token.sub),
           ),
         );
-      if (!projects.length) {
+
+      const [invited] = await db
+        .select({})
+        .from(projectInvitationsTable)
+        .where(
+          and(
+            eq(projectInvitationsTable.projectId, project.id),
+            eq(projectInvitationsTable.email, token.email),
+          ),
+        );
+
+      console.log({ token });
+
+      if (!projectUser && !invited) {
         return NextResponse.rewrite(
           new URL("/dashboard/project-not-found", req.url),
         );

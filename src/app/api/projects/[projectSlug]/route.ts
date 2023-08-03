@@ -5,10 +5,14 @@ import { Project, projectsTable } from "@/lib/schema/projects";
 import { db } from "@/lib/drizzle";
 import { eq } from "drizzle-orm";
 
-export const GET = withProject(async (req, ctx) => {
+export const GET = withProject(async (_, ctx) => {
+  const [project] = await db
+    .select()
+    .from(projectsTable)
+    .where(eq(projectsTable.id, ctx.projectId));
   return NextResponse.json({
     success: true,
-    data: ctx.project,
+    data: project,
   } satisfies ApiResponse<Project>);
 });
 
@@ -45,11 +49,11 @@ export const PUT = withProject(
 );
 
 export const DELETE = withProject(
-  async (req, ctx) => {
+  async (_, ctx) => {
     try {
       const [project] = await db
         .delete(projectsTable)
-        .where(eq(projectsTable.slug, ctx.params.projectSlug))
+        .where(eq(projectsTable.id, ctx.projectId))
         .returning();
       return NextResponse.json({
         success: true,
