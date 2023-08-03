@@ -2,18 +2,16 @@ import ProjectNameCard from "./project-name-card";
 import ProjectSlugCard from "./project-slug-card";
 import ProjectDeleteCard from "./project-delete-card";
 import { getProjectBySlug } from "@/utils/projects";
-import { notFound } from "next/navigation";
+import { getSession } from "@/utils/session";
+import { Session } from "next-auth";
 
 export default async function GeneralProjectSettings({
   params,
 }: {
   params: { projectSlug: string };
 }) {
-  const project = await getProjectBySlug(params.projectSlug);
-
-  if (!project) {
-    notFound();
-  }
+  const session = (await getSession()) as Session;
+  const project = await getProjectBySlug(session.user.id, params.projectSlug);
 
   return (
     <div className="grid gap-8">

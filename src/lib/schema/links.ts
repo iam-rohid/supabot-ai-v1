@@ -7,7 +7,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { porjectsTable } from "./projects";
+import { projectsTable } from "./projects";
 import type { InferModel } from "drizzle-orm";
 
 export const linkTrainingStatus = pgEnum("link_training_status", [
@@ -27,7 +27,7 @@ export const linksTable = pgTable(
     url: varchar("url", { length: 255 }).notNull(),
     projectId: uuid("project_id")
       .notNull()
-      .references(() => porjectsTable.id, { onDelete: "cascade" }),
+      .references(() => projectsTable.id, { onDelete: "cascade" }),
     metadata: jsonb("metadata").$type<Record<string, any>>(),
     trainingStatus: linkTrainingStatus("training_status")
       .default("idle")

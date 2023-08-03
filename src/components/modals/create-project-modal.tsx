@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Project } from "@/lib/schema/projects";
 import { UseModalReturning } from "./types";
+import { useSession } from "next-auth/react";
 
 const createProjectFn = async (data: CreateProjectSchemaData) => {
   const res = await fetch("/api/projects", {
@@ -52,6 +53,7 @@ export function CreateProjectModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { data: session } = useSession();
   const form = useForm<CreateProjectSchemaData>({
     resolver: zodResolver(createProjectSchema),
   });
@@ -63,12 +65,14 @@ export function CreateProjectModal({
     async (data: CreateProjectSchemaData) => {
       try {
         const project = await createProjectFn(data);
-        toast({ title: "Project created successfully!" });
-        queryClient.setQueryData<Project[]>(["projects"], (projects) =>
-          projects ? [...projects, project] : [project],
+        queryClient.setQueryData<Project[]>(
+          ["projects", session?.user.id],
+          (projects) => (projects ? [...projects, project] : [project]),
         );
+        router.refresh();
         router.push(`/dashboard/${project.slug}`);
         onOpenChange(false);
+        toast({ title: "Project created successfully!" });
       } catch (error) {
         toast({
           title:
@@ -77,7 +81,7 @@ export function CreateProjectModal({
         });
       }
     },
-    [onOpenChange, queryClient, router, toast],
+    [onOpenChange, queryClient, router, session?.user.id, toast],
   );
 
   return (

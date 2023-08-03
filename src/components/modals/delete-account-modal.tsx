@@ -53,13 +53,9 @@ export function DeleteAccountModal({
       await deleteAccountFn();
       toast({ title: "Account deleted successfully!" });
       await update();
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          queryClient.clear();
-          router.push("/signin");
-          resolve(null);
-        }, 200),
-      );
+      queryClient.clear();
+      router.refresh();
+      router.push("/signin");
     } catch (error) {
       setIsDeleting(false);
       toast({

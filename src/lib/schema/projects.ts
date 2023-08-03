@@ -8,7 +8,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const porjectsTable = pgTable(
+export const projectsTable = pgTable(
   "projects",
   {
     id: uuid("id").primaryKey().defaultRandom().notNull(),
@@ -26,5 +26,5 @@ export const porjectsTable = pgTable(
   },
 );
 
-export type Project = InferModel<typeof porjectsTable>;
-export type NewProject = InferModel<typeof porjectsTable, "insert">;
+export type Project = InferModel<typeof projectsTable>;
+export type NewProject = InferModel<typeof projectsTable, "insert">;

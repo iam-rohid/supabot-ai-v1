@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Project } from "@/lib/schema/projects";
 import { UseModalReturning } from "./types";
+import { useSession } from "next-auth/react";
 
 const deleteProjectFn = async (slug: string) => {
   const res = await fetch(`/api/projects/${slug}`, {
@@ -46,6 +47,7 @@ export function DeleteProjectModal({
   const { toast } = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
 
   const handleDelete = useCallback(async () => {
     if (
@@ -57,11 +59,15 @@ export function DeleteProjectModal({
     setIsDeleting(true);
     try {
       await deleteProjectFn(projectSlug);
-      queryClient.setQueryData<Project[]>(["projects"], (projects) =>
-        projects ? projects.filter((bot) => bot.slug !== projectSlug) : [],
+      queryClient.setQueryData<Project[]>(
+        ["projects", session?.user.id],
+        (projects) =>
+          projects ? projects.filter((bot) => bot.slug !== projectSlug) : [],
       );
-      toast({ title: "Project deleted successfully!" });
+      router.refresh();
       router.push("/dashboard");
+      toast({ title: "Project deleted successfully!" });
+      setIsDeleting(false);
     } catch (error) {
       setIsDeleting(false);
       toast({
@@ -75,8 +81,9 @@ export function DeleteProjectModal({
     projectSlug,
     verifyText,
     queryClient,
-    toast,
+    session?.user.id,
     router,
+    toast,
   ]);
 
   return (

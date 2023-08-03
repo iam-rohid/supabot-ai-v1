@@ -16,6 +16,8 @@ import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { getAllProjects } from "@/utils/projects";
 import NewProjectButton from "./new-project-button";
+import { getSession } from "@/utils/session";
+import { Session } from "next-auth";
 
 export const metadata: Metadata = {
   title: `Projects | ${APP_NAME}`,
@@ -47,7 +49,8 @@ function ProjectListLoadingSkeletion() {
 }
 
 async function ProjectList() {
-  const projects = await getAllProjects();
+  const session = (await getSession()) as Session;
+  const projects = await getAllProjects(session.user.id);
 
   if (projects.length === 0) {
     return (

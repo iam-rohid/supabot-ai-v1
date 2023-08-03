@@ -5,7 +5,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { porjectsTable } from "./projects";
+import { projectsTable } from "./projects";
 import { usersTable } from "./users";
 import type { InferModel } from "drizzle-orm";
 
@@ -22,7 +22,7 @@ export const projectUsersTable = pgTable(
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
     projectId: uuid("project_id")
       .notNull()
-      .references(() => porjectsTable.id, { onDelete: "cascade" }),
+      .references(() => projectsTable.id, { onDelete: "cascade" }),
     userId: uuid("user_id")
       .notNull()
       .references(() => usersTable.id, { onDelete: "cascade" }),

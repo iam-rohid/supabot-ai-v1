@@ -5,7 +5,7 @@ import {
 } from "@/lib/validations";
 import { NextResponse } from "next/server";
 import { withAuth } from "../utilts";
-import { Project, porjectsTable } from "@/lib/schema/projects";
+import { Project, projectsTable } from "@/lib/schema/projects";
 import { db } from "@/lib/drizzle";
 import { projectUsersTable } from "@/lib/schema/project-users";
 import { eq } from "drizzle-orm";
@@ -14,17 +14,17 @@ export const GET = withAuth(async (req, ctx) => {
   try {
     const projects = await db
       .select({
-        id: porjectsTable.id,
-        createdAt: porjectsTable.createdAt,
-        updatedAt: porjectsTable.updatedAt,
-        name: porjectsTable.name,
-        slug: porjectsTable.slug,
-        description: porjectsTable.description,
+        id: projectsTable.id,
+        createdAt: projectsTable.createdAt,
+        updatedAt: projectsTable.updatedAt,
+        name: projectsTable.name,
+        slug: projectsTable.slug,
+        description: projectsTable.description,
       })
       .from(projectUsersTable)
       .innerJoin(
-        porjectsTable,
-        eq(porjectsTable.id, projectUsersTable.projectId),
+        projectsTable,
+        eq(projectsTable.id, projectUsersTable.projectId),
       )
       .where(eq(projectUsersTable.userId, ctx.session.user.id));
 
@@ -57,7 +57,7 @@ export const POST = withAuth(async (req, ctx) => {
   }
 
   try {
-    const [project] = await db.insert(porjectsTable).values(data).returning();
+    const [project] = await db.insert(projectsTable).values(data).returning();
     await db.insert(projectUsersTable).values({
       projectId: project.id,
       userId: ctx.session.user.id,

@@ -7,7 +7,7 @@ import {
   withAuth,
   WithAuthContext,
 } from "../../utilts";
-import { Project, porjectsTable } from "@/lib/schema/projects";
+import { Project, projectsTable } from "@/lib/schema/projects";
 import { ProjectUser, projectUsersTable } from "@/lib/schema/project-users";
 import { db } from "@/lib/drizzle";
 import { and, eq } from "drizzle-orm";
@@ -31,22 +31,22 @@ export const withProject = <C extends WithProjectContext>(
   withAuth<C>(async (req, ctx) => {
     const [project] = await db
       .select({
-        id: porjectsTable.id,
-        createdAt: porjectsTable.createdAt,
-        updatedAt: porjectsTable.updatedAt,
-        name: porjectsTable.name,
-        slug: porjectsTable.slug,
-        description: porjectsTable.description,
+        id: projectsTable.id,
+        createdAt: projectsTable.createdAt,
+        updatedAt: projectsTable.updatedAt,
+        name: projectsTable.name,
+        slug: projectsTable.slug,
+        description: projectsTable.description,
         role: projectUsersTable.role,
       })
-      .from(porjectsTable)
+      .from(projectsTable)
       .innerJoin(
         projectUsersTable,
-        eq(projectUsersTable.projectId, porjectsTable.id),
+        eq(projectUsersTable.projectId, projectsTable.id),
       )
       .where(
         and(
-          eq(porjectsTable.slug, ctx.params.projectSlug),
+          eq(projectsTable.slug, ctx.params.projectSlug),
           eq(projectUsersTable.userId, ctx.session.user.id),
         ),
       );
