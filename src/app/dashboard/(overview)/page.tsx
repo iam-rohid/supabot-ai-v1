@@ -2,7 +2,6 @@ import PageHeader from "@/components/page-header";
 import { APP_NAME } from "@/lib/constants";
 import { Metadata } from "next";
 import { Suspense } from "react";
-import NewProjectButton from "@/components/new-chatbot-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import {
@@ -16,6 +15,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { getAllProjects } from "@/utils/projects";
+import NewProjectButton from "./new-project-button";
 
 export const metadata: Metadata = {
   title: `Projects | ${APP_NAME}`,
@@ -55,7 +55,7 @@ async function ProjectList() {
         <CardHeader>
           <CardTitle>You don&apos;t have any projects yet!</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <Image
             src="/assets/empty-artwork.svg"
             width={512}
@@ -65,7 +65,7 @@ async function ProjectList() {
           />
         </CardContent>
         <CardFooter className="justify-center">
-          <NewProjectButton label="Create a chatbot" />
+          <NewProjectButton label="Create a Project" />
         </CardFooter>
       </Card>
     );

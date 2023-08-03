@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeleteProjectModal } from "@/components/modals/delete-chatbot-modal";
+import { useDeleteProjectModal } from "@/components/modals/delete-project-modal";
 import { Button } from "@/components/ui/button";
 import {
   Card,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCreateProjectModal } from "@/components/modals/create-chatbot-modal";
+import { useCreateProjectModal } from "@/components/modals/create-project-modal";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 
@@ -13,7 +13,7 @@ export default function NewProjectButton({
   return (
     <>
       <Button onClick={() => setOpen(true)}>
-        <PlusIcon size={20} className="-ml-1 mr-2" />
+        <PlusIcon className="-ml-1 mr-2 h-4 w-4" />
         {label}
       </Button>
       <Modal />

@@ -9,14 +9,14 @@ import { porjectsTable } from "./projects";
 import { usersTable } from "./users";
 import type { InferModel } from "drizzle-orm";
 
-export const projectUserRole = pgEnum("ChatbotUserRole", [
+export const projectUserRole = pgEnum("project_user_role", [
   "owner",
   "admin",
   "member",
 ]);
 
 export const projectUsersTable = pgTable(
-  "chatbot_users",
+  "project_users",
   {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),

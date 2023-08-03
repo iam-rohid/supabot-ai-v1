@@ -22,6 +22,20 @@
       "when": 1691033103809,
       "tag": "0002_minor_ultragirl",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1691037877147,
+      "tag": "0003_solid_proudstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1691038032965,
+      "tag": "0004_flowery_warpath",
+      "breakpoints": true
     }
   ]
 }
