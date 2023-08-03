@@ -6,7 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import queryClient from "@/lib/query-client";
 import ThemeProvider from "@/components/theme-provider";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 
 export default function Providers({
   children,

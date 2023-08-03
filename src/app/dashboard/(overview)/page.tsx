@@ -17,7 +17,7 @@ import Image from "next/image";
 import { getAllProjects } from "@/utils/projects";
 import NewProjectButton from "./new-project-button";
 import { getSession } from "@/utils/session";
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
 
 export const metadata: Metadata = {
   title: `Projects | ${APP_NAME}`,

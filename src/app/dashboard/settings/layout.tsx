@@ -1,5 +1,5 @@
 import PageHeader from "@/components/page-header";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Sidebar from "@/components/sidebar";
 
 export default function SettingsLayout({ children }: { children: ReactNode }) {
