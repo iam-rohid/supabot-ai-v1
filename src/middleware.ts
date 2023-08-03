@@ -50,7 +50,6 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
             eq(projectsTable.slug, key),
           ),
         );
-      console.log({ key, projects });
       if (!projects.length) {
         return NextResponse.rewrite(
           new URL("/dashboard/project-not-found", req.url),

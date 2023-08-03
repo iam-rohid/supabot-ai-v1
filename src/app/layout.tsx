@@ -30,6 +30,12 @@ export default async function RootLayout({
           `,
           }}
         ></script>
+        <script
+          defer
+          src="https://unpkg.com/@tinybirdco/flock.js"
+          data-host="https://api.us-east.tinybird.co"
+          data-token={process.env.TINYBIRD_DATA_TOKEN}
+        ></script>
       </head>
       <body>
         <Providers session={session}>{children}</Providers>
