@@ -20,7 +20,7 @@ export const projectUsersTable = pgTable(
   {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
-    projectId: uuid("chatbot_id")
+    projectId: uuid("project_id")
       .notNull()
       .references(() => porjectsTable.id, { onDelete: "cascade" }),
     userId: uuid("user_id")

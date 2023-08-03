@@ -25,7 +25,7 @@ export const linksTable = pgTable(
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
     lastTrainedAt: timestamp("last_trained_at"),
     url: varchar("url", { length: 255 }).notNull(),
-    projectId: uuid("chatbot_id")
+    projectId: uuid("project_id")
       .notNull()
       .references(() => porjectsTable.id, { onDelete: "cascade" }),
     metadata: jsonb("metadata").$type<Record<string, any>>(),

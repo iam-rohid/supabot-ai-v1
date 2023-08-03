@@ -53,7 +53,7 @@ async function ProjectList() {
     return (
       <Card className="text-center">
         <CardHeader>
-          <CardTitle>You don&apos;t have any chatbots yet!</CardTitle>
+          <CardTitle>You don&apos;t have any projects yet!</CardTitle>
         </CardHeader>
         <CardContent>
           <Image

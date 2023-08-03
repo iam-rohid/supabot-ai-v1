@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const porjectsTable = pgTable(
-  "chatbots",
+  "projects",
   {
     id: uuid("id").primaryKey().defaultRandom().notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),

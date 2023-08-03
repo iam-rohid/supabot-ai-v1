@@ -15,6 +15,13 @@
       "when": 1690878401452,
       "tag": "0001_watery_swarm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1691033103809,
+      "tag": "0002_minor_ultragirl",
+      "breakpoints": true
     }
   ]
 }
