@@ -35,7 +35,7 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
     }
 
     const key = req.nextUrl.pathname.split("/")[2];
-    const presurvedKeys = new Set(["settings", "not-found"]);
+    const presurvedKeys = new Set(["settings", "project-not-found"]);
     if (key && !presurvedKeys.has(key)) {
       const projects = await db
         .select({})
