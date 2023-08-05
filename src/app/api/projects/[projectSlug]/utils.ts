@@ -9,7 +9,7 @@ import {
 } from "../../utilts";
 import { Project, projectsTable } from "@/lib/schema/projects";
 import { ProjectUser, projectUsersTable } from "@/lib/schema/project-users";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { and, eq } from "drizzle-orm";
 import {
   ProjectInvitation,

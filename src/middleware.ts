@@ -1,77 +1,98 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { db } from "./lib/drizzle";
-import { projectUsersTable } from "./lib/schema/project-users";
-import { and, eq } from "drizzle-orm";
-import { projectsTable } from "./lib/schema/projects";
-import { projectInvitationsTable } from "./lib/schema/project-invitations";
+import { JWT, getToken } from "next-auth/jwt";
+import { sql } from "./lib/db";
+
+export const getTokenFromReq = (req: NextRequest) =>
+  getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
 export const config = {
   matcher: [
-    /*
-     * Match all paths except for:
-     * 1. /api/ routes
-     * 2. /_next/ (Next.js internals)
-     * 3. /_proxy/ (special page for OG tags proxying)
-     * 4. /_static (inside /public)
-     * 5. /_vercel (Vercel internals)
-     * 6. /favicon.ico, /sitemap.xml, /robots.txt (static files)
-     */
     "/((?!api/|_next/|_proxy/|_static|_vercel|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
 
-export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
-  if (req.nextUrl.pathname.startsWith("/dashboard")) {
-    const token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-    if (!(token?.sub && token.email)) {
-      const params = new URLSearchParams({ next: req.nextUrl.href });
-      return NextResponse.redirect(
-        new URL(`/signin?${params.toString()}`, req.url),
+interface MiddlewareHandler<Ctx = Record<string, any>> {
+  (req: NextRequest, ev: NextFetchEvent, ctx: Ctx): any;
+}
+
+const protectProject: MiddlewareHandler<{ token: JWT; slug: string }> = async (
+  req,
+  ev,
+  ctx,
+) => {
+  const [project] = await sql(
+    `
+    SELECT * FROM projects 
+    WHERE projects.slug = $1
+    LIMIT 1
+    `,
+    [ctx.slug],
+  );
+
+  if (!project) {
+    return NextResponse.rewrite(
+      new URL("/dashboard/project-not-found", req.url),
+    );
+  }
+
+  const [projectUser] = await sql(
+    `
+    SELECT * FROM project_users 
+    WHERE project_users.project_id = $1 AND project_users.user_id = $2 
+    LIMIT 1
+    `,
+    [project.id, ctx.token.sub],
+  );
+
+  if (!projectUser) {
+    const [invitedUser] = await sql(
+      `
+      SELECT * FROM project_invitations 
+      WHERE project_invitations.project_id = $1 AND project_invitations.email = $2 
+      LIMIT 1
+      `,
+      [project.id, ctx.token.email],
+    );
+    if (!invitedUser) {
+      return NextResponse.rewrite(
+        new URL("/dashboard/project-not-found", req.url),
       );
     }
-
-    const key = req.nextUrl.pathname.split("/")[2];
-    const presurvedKeys = new Set(["settings", "project-not-found"]);
-    if (key && !presurvedKeys.has(key)) {
-      const [project] = await db
-        .select({ id: projectsTable.id })
-        .from(projectsTable)
-        .where(eq(projectsTable.slug, key));
-      if (!project) {
-        return NextResponse.rewrite(
-          new URL("/dashboard/project-not-found", req.url),
-        );
-      }
-
-      const [projectUser] = await db
-        .select({})
-        .from(projectUsersTable)
-        .where(
-          and(
-            eq(projectUsersTable.projectId, project.id),
-            eq(projectUsersTable.userId, token.sub),
-          ),
-        );
-
-      const [invited] = await db
-        .select({})
-        .from(projectInvitationsTable)
-        .where(
-          and(
-            eq(projectInvitationsTable.projectId, project.id),
-            eq(projectInvitationsTable.email, token.email),
-          ),
-        );
-
-      if (!projectUser && !invited) {
-        return NextResponse.rewrite(
-          new URL("/dashboard/project-not-found", req.url),
-        );
-      }
-    }
   }
+
+  return NextResponse.next();
+};
+
+const protectDashboard: MiddlewareHandler = async (req, ev, ctx) => {
+  const token = await getTokenFromReq(req);
+
+  if (!(token && token.sub && token.email)) {
+    const params = new URLSearchParams({ next: req.nextUrl.href });
+    return NextResponse.redirect(
+      new URL(`/signin?${params.toString()}`, req.url),
+    );
+  }
+
+  /*
+  if pathanme is "/dashboard/my-bot"
+  then key would be "my-bot"
+  */
+  const key = req.nextUrl.pathname.split("/")[2];
+  const presurvedKeys = new Set(["settings", "project-not-found"]);
+
+  if (key && !presurvedKeys.has(key)) {
+    return protectProject(req, ev, { ...ctx, token, slug: key });
+  }
+  return NextResponse.next();
+};
+
+export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
+  if (req.nextUrl.pathname.startsWith("/dashboard")) {
+    return protectDashboard(req, ev, {});
+  }
+
+  return NextResponse.next();
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { withProject } from "../../utils";
 import type { ApiResponse } from "@/lib/types";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import {
   type ProjectInvitation,
   projectInvitationsTable,

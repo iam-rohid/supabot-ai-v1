@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { withProject } from "../utils";
 import { ApiResponse } from "@/lib/types";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { projectUsersTable } from "@/lib/schema/project-users";
 import { usersTable } from "@/lib/schema/users";
 import { and, eq } from "drizzle-orm";

@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { APP_NAME } from "@/lib/constants";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { projectInvitationsTable } from "@/lib/schema/project-invitations";
 import { projectsTable } from "@/lib/schema/projects";
 import { getProjectBySlug } from "@/utils/projects";

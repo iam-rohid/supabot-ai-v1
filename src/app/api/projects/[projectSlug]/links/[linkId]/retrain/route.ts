@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { withLink } from "../utils";
 import { ApiResponse } from "@/lib/types";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { LinkModel, linksTable } from "@/lib/schema/links";
 import { eq } from "drizzle-orm";
 import {

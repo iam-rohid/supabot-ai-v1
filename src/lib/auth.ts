@@ -1,8 +1,8 @@
 import { type AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
-import { APP_NAME, EMAIL_DOMAIN } from "./constants";
-import { db } from "./drizzle";
+import { APP_NAME } from "./constants";
+import { db } from "./db";
 import { usersTable } from "./schema/users";
 import { eq } from "drizzle-orm";
 import { drizzleAdapter } from "./drizzle-adapter";

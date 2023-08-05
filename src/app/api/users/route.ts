@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { withAuth } from "../utilts";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { type User, usersTable } from "@/lib/schema/users";
 import { and, eq } from "drizzle-orm";
 import { projectUsersTable } from "@/lib/schema/project-users";

@@ -1,5 +1,5 @@
 import { NextAuthOptions } from "next-auth";
-import { db } from "./drizzle";
+import { db } from "./db";
 import { eq, and } from "drizzle-orm";
 import { accountsTable } from "./schema/accounts";
 import { sessionsTable } from "./schema/sessions";

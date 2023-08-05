@@ -2,7 +2,7 @@ import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { withProject } from "./utils";
 import { Project, projectsTable } from "@/lib/schema/projects";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 
 export const GET = withProject(async (_, ctx) => {

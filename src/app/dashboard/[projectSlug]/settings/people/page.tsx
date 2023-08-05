@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { projectUsersTable } from "@/lib/schema/project-users";
 import { projectsTable } from "@/lib/schema/projects";
 import { usersTable } from "@/lib/schema/users";

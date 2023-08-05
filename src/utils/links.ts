@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { linksTable } from "@/lib/schema/links";
 import { eq } from "drizzle-orm";
 import { projectsTable } from "@/lib/schema/projects";

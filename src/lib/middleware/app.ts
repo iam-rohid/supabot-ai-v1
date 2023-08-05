@@ -2,7 +2,7 @@ import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { parseReq } from "./utils";
 import { getToken } from "next-auth/jwt";
 import { AUTH_PATHNAMES, RESURVED_APP_PATH_KEYS } from "../constants";
-import { db } from "../drizzle";
+import { db } from "../db";
 import { projectsTable } from "../schema/projects";
 import { and, eq } from "drizzle-orm";
 import { projectUsersTable } from "../schema/project-users";

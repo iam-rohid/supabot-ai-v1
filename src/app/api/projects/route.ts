@@ -6,7 +6,7 @@ import {
 import { NextResponse } from "next/server";
 import { withAuth } from "../utilts";
 import { Project, projectsTable } from "@/lib/schema/projects";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { projectUsersTable } from "@/lib/schema/project-users";
 import { eq } from "drizzle-orm";
 

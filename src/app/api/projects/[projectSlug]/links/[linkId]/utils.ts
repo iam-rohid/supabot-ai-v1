@@ -7,7 +7,7 @@ import {
   withProject,
   WithProjectContext,
 } from "../../utils";
-import { db } from "@/lib/drizzle";
+import { db } from "@/lib/db";
 import { LinkModel, linksTable } from "@/lib/schema/links";
 import { and, eq } from "drizzle-orm";
 
