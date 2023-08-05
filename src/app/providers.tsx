@@ -5,8 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SessionProvider } from "next-auth/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import queryClient from "@/lib/query-client";
-import ThemeProvider from "@/components/theme-provider";
 import type { Session } from "next-auth";
+import { ThemeProvider } from "next-themes";
 
 export default function Providers({
   children,
@@ -18,7 +18,7 @@ export default function Providers({
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+        <ThemeProvider attribute="class" enableSystem defaultTheme="system">
           <TooltipProvider>
             {children}
             <Toaster />

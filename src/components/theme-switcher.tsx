@@ -1,8 +1,6 @@
 "use client";
 
-import * as React from "react";
 import { CheckIcon, Computer, Moon, Sun } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,13 +9,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { useTheme } from "./theme-provider";
+import { useTheme } from "next-themes";
 import { Skeleton } from "./ui/skeleton";
+import { useEffect, useState } from "react";
 
 export default function ThemeSwitcher() {
-  const { isLoading, setTheme, theme } = useTheme();
+  const { setTheme, theme } = useTheme();
+  const [domLoaded, setDomLoaded] = useState(false);
 
-  if (isLoading) {
+  useEffect(() => {
+    setDomLoaded(true);
+  }, []);
+
+  if (!domLoaded) {
     return <Skeleton className="h-10 w-10" />;
   }
 

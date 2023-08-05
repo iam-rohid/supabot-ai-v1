@@ -1,4 +1,5 @@
 import NavLink from "@/components/nav-link";
+import ThemeSwitcher from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { APP_NAME, HOME_DOMAIN } from "@/lib/constants";
@@ -46,7 +47,8 @@ export default function Header() {
               Pricing
             </NavLink>
           </nav>
-          <div className="flex flex-1 items-center justify-end">
+          <div className="flex flex-1 items-center justify-end gap-6">
+            <ThemeSwitcher />
             <Suspense fallback={<Skeleton className="h-10 w-32" />}>
               <AuthButtonGroup />
             </Suspense>

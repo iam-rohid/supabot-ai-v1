@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function HeaderMessage() {
   if (process.env.NODE_ENV === "development") {
     return null;

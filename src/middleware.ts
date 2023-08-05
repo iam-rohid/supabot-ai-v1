@@ -67,8 +67,6 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
           ),
         );
 
-      console.log({ token });
-
       if (!projectUser && !invited) {
         return NextResponse.rewrite(
           new URL("/dashboard/project-not-found", req.url),
