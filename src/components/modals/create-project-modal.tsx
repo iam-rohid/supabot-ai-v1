@@ -29,7 +29,7 @@ import type { ApiResponse } from "@/lib/types";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Project } from "@/lib/schema/projects";
+import type { Project } from "@/lib/types/db-types";
 import { UseModalReturning } from "./types";
 import { useSession } from "next-auth/react";
 

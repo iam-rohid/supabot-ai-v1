@@ -1,3 +1,4 @@
+// import "server-only";
 import { NeonQueryFunction, neon } from "@neondatabase/serverless";
 import { NeonHttpDatabase, drizzle } from "drizzle-orm/neon-http";
 

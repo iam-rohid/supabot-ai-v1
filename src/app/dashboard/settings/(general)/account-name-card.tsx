@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { APP_NAME } from "@/lib/constants";
-import { User } from "@/lib/schema/users";
+import type { User } from "@/lib/types/db-types";
 import type { ApiResponse } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";

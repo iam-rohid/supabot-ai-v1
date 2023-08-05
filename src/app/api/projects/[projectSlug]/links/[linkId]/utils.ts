@@ -8,8 +8,9 @@ import {
   WithProjectContext,
 } from "../../utils";
 import { db } from "@/lib/db";
-import { LinkModel, linksTable } from "@/lib/schema/links";
+import { linksTable } from "@/lib/schema/links";
 import { and, eq } from "drizzle-orm";
+import type { LinkModel } from "@/lib/types/db-types";
 
 export type WithLinkContext = {
   params: { slug: string; linkId: string };

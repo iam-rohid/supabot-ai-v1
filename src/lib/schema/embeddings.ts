@@ -37,6 +37,3 @@ export const embeddingsTable = pgTable("embeddings", {
   tokenCount: smallint("token_count").notNull(),
   metadata: jsonb("metadata").$type<Record<string, any>>(),
 });
-
-export type EmbeddingRow = InferModel<typeof embeddingsTable>;
-export type NewEmbeddingRow = InferModel<typeof embeddingsTable, "insert">;

@@ -6,7 +6,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { projectUserRole } from "./project-users";
-import { InferModel } from "drizzle-orm";
 import { projectsTable } from "./projects";
 
 export const projectInvitationsTable = pgTable(
@@ -24,5 +23,3 @@ export const projectInvitationsTable = pgTable(
     pk: primaryKey(table.projectId, table.email),
   }),
 );
-
-export type ProjectInvitation = InferModel<typeof projectInvitationsTable>;

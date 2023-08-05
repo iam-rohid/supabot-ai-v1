@@ -21,8 +21,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { APP_NAME } from "@/lib/constants";
-import { Project } from "@/lib/schema/projects";
 import type { ApiResponse } from "@/lib/types";
+import type { Project } from "@/lib/types/db-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";

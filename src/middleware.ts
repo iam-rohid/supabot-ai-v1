@@ -53,7 +53,6 @@ const protectProject: MiddlewareHandler<{ token: JWT; slug: string }> = async (
       }
     }
   }
-
   if (!canVisit) {
     return NextResponse.rewrite(
       new URL("/dashboard/project-not-found", req.url),
@@ -65,7 +64,6 @@ const protectProject: MiddlewareHandler<{ token: JWT; slug: string }> = async (
 
 const protectDashboard: MiddlewareHandler = async (req, ev, ctx) => {
   const token = await getTokenFromReq(req);
-
   if (!(token && token.sub && token.email)) {
     const params = new URLSearchParams({ next: req.nextUrl.href });
     return NextResponse.redirect(
@@ -90,6 +88,5 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
   if (req.nextUrl.pathname.startsWith("/dashboard")) {
     return protectDashboard(req, ev, {});
   }
-
   return NextResponse.next();
 }

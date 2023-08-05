@@ -1,7 +1,7 @@
 import PageHeader from "@/components/page-header";
 import AddLinkButton from "./add-link-button";
 import { Suspense } from "react";
-import { getLinksByProjectSlug } from "@/utils/links";
+import { getLinksByProjectId } from "@/utils/links";
 import {
   Table,
   TableBody,
@@ -30,8 +30,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
+import { getProjectBySlug } from "@/utils/projects";
 
-export default async function LinksPage({
+export default function LinksPage({
   params,
 }: {
   params: { projectSlug: string };
@@ -87,7 +88,8 @@ function LinksListLoadingSkeletion() {
 }
 
 async function LinksList({ projectSlug }: { projectSlug: string }) {
-  const links = await getLinksByProjectSlug(projectSlug);
+  const project = await getProjectBySlug(projectSlug);
+  const links = await getLinksByProjectId(project.id);
 
   if (links.length === 0) {
     return (

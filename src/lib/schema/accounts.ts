@@ -7,7 +7,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { usersTable } from "./users";
-import type { InferModel } from "drizzle-orm";
 import { ProviderType } from "next-auth/providers/index";
 
 export const accountsTable = pgTable(
@@ -39,6 +38,3 @@ export const accountsTable = pgTable(
     };
   },
 );
-
-export type Account = InferModel<typeof accountsTable>;
-export type NewAccount = InferModel<typeof accountsTable, "insert">;

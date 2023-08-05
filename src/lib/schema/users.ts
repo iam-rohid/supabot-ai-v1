@@ -1,4 +1,3 @@
-import type { InferModel } from "drizzle-orm";
 import {
   pgEnum,
   pgTable,
@@ -27,6 +26,3 @@ export const usersTable = pgTable(
     emailKey: uniqueIndex().on(table.email),
   }),
 );
-
-export type User = InferModel<typeof usersTable>;
-export type NewUser = InferModel<typeof usersTable, "insert">;

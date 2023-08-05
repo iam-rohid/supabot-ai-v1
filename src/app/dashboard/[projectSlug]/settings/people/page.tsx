@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,19 +7,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { db } from "@/lib/db";
-import { projectUsersTable } from "@/lib/schema/project-users";
-import { projectsTable } from "@/lib/schema/projects";
-import { usersTable } from "@/lib/schema/users";
-import { getProjectBySlug } from "@/utils/projects";
-import { getSession } from "@/utils/session";
-import { format, formatDistanceToNow } from "date-fns";
-import { eq } from "drizzle-orm";
-import { MoreVertical, UserIcon } from "lucide-react";
-import { Session } from "next-auth";
-import { Suspense, cache } from "react";
+import {
+  getInvitationsByProjectId,
+  getMembersByProjectId,
+  getProjectBySlug,
+} from "@/utils/projects";
+import { format } from "date-fns";
+import { UserIcon } from "lucide-react";
+import { Suspense } from "react";
 import InviteUserButton from "./invite-user-button";
-import { projectInvitationsTable } from "@/lib/schema/project-invitations";
 import {
   Table,
   TableBody,
@@ -37,8 +32,7 @@ export default async function PeoplePage({
 }: {
   params: { projectSlug: string };
 }) {
-  const session = (await getSession()) as Session;
-  const project = await getProjectBySlug(session.user.id, params.projectSlug);
+  const project = await getProjectBySlug(params.projectSlug);
 
   return (
     <div className="space-y-8">
@@ -50,7 +44,7 @@ export default async function PeoplePage({
               Teammates or friends that have access to this project.
             </CardDescription>
           </div>
-          <InviteUserButton projectSlug={params.projectSlug} />
+          <InviteUserButton projectSlug={project.slug} />
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="members">
@@ -60,16 +54,13 @@ export default async function PeoplePage({
             </TabsList>
             <TabsContent value="members">
               <Suspense fallback={<p>Loading...</p>}>
-                <ProjectMembersList
-                  projectSlug={params.projectSlug}
-                  projectId={project.id}
-                />
+                <ProjectMembersList projectId={project.id} />
               </Suspense>
             </TabsContent>
             <TabsContent value="invitations">
               <Suspense fallback={<p>Loading...</p>}>
                 <ProjectInvitationsList
-                  projectSlug={params.projectSlug}
+                  projectSlug={project.slug}
                   projectId={project.id}
                 />
               </Suspense>
@@ -81,29 +72,7 @@ export default async function PeoplePage({
   );
 }
 
-const getMembersByProjectId = cache(async (projectId: string) =>
-  db
-    .select({
-      userId: usersTable.id,
-      name: usersTable.name,
-      email: usersTable.email,
-      image: usersTable.image,
-      role: projectUsersTable.role,
-      joinedAt: projectUsersTable.createdAt,
-    })
-    .from(projectUsersTable)
-    .innerJoin(usersTable, eq(usersTable.id, projectUsersTable.userId))
-    .where(eq(projectUsersTable.projectId, projectId))
-    .orderBy(projectUsersTable.createdAt),
-);
-
-async function ProjectMembersList({
-  projectId,
-  projectSlug,
-}: {
-  projectId: string;
-  projectSlug: string;
-}) {
+async function ProjectMembersList({ projectId }: { projectId: string }) {
   const members = await getMembersByProjectId(projectId);
   return (
     <div className="rounded-md border">
@@ -153,14 +122,6 @@ async function ProjectMembersList({
     </div>
   );
 }
-
-const getInvitationsByProjectId = cache(async (projectId: string) =>
-  db
-    .select()
-    .from(projectInvitationsTable)
-    .where(eq(projectInvitationsTable.projectId, projectId))
-    .orderBy(projectInvitationsTable.createdAt),
-);
 
 async function ProjectInvitationsList({
   projectId,

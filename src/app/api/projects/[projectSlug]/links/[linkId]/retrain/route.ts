@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { withLink } from "../utils";
 import { ApiResponse } from "@/lib/types";
 import { db } from "@/lib/db";
-import { LinkModel, linksTable } from "@/lib/schema/links";
+import { linksTable } from "@/lib/schema/links";
 import { eq } from "drizzle-orm";
 import {
   generateEmbeddingFromSections,
@@ -10,6 +10,7 @@ import {
   splitMarkdownBySections,
 } from "./utils";
 import { embeddingsTable } from "@/lib/schema/embeddings";
+import type { LinkModel } from "@/lib/types/db-types";
 
 export const POST = withLink(async (req, ctx) => {
   if (ctx.link.trainingStatus === "training") {

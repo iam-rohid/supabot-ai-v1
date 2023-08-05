@@ -1,0 +1,20 @@
+import { InferModel } from "drizzle-orm";
+import { verificationTokensTable } from "../schema/verification-tokens";
+import { usersTable } from "../schema/users";
+import { sessionsTable } from "../schema/sessions";
+import { projectsTable } from "../schema/projects";
+import { projectUsersTable } from "../schema/project-users";
+import { projectInvitationsTable } from "../schema/project-invitations";
+import { linksTable } from "../schema/links";
+import { embeddingsTable } from "../schema/embeddings";
+import { accountsTable } from "../schema/accounts";
+
+export type VerificationToken = InferModel<typeof verificationTokensTable>;
+export type User = InferModel<typeof usersTable>;
+export type Session = InferModel<typeof sessionsTable>;
+export type Project = InferModel<typeof projectsTable>;
+export type ProjectUser = InferModel<typeof projectUsersTable>;
+export type ProjectInvitation = InferModel<typeof projectInvitationsTable>;
+export type LinkModel = InferModel<typeof linksTable>;
+export type Embedding = InferModel<typeof embeddingsTable>;
+export type Account = InferModel<typeof accountsTable>;

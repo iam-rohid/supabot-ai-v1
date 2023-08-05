@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type ReactNode, createContext, useContext, useMemo } from "react";
 import type { ApiResponse } from "@/lib/types";
-import { Project } from "@/lib/schema/projects";
+import type { Project } from "@/lib/types/db-types";
 import { useSession } from "next-auth/react";
 
 export type ProjectsContextType = {

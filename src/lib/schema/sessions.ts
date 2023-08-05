@@ -6,7 +6,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { usersTable } from "./users";
-import type { InferModel } from "drizzle-orm";
 
 export const sessionsTable = pgTable(
   "sessions",
@@ -24,6 +23,3 @@ export const sessionsTable = pgTable(
     };
   },
 );
-
-export type Session = InferModel<typeof sessionsTable>;
-export type NewSession = InferModel<typeof sessionsTable, "insert">;

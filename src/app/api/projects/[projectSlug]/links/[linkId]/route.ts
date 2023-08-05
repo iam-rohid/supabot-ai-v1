@@ -1,9 +1,10 @@
 import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { withLink } from "./utils";
-import { LinkModel, linksTable } from "@/lib/schema/links";
+import { linksTable } from "@/lib/schema/links";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import type { LinkModel } from "@/lib/types/db-types";
 
 export const GET = withLink(async (req, ctx) => {
   return NextResponse.json({

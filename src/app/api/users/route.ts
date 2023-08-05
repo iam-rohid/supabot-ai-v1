@@ -2,9 +2,10 @@ import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { withAuth } from "../utilts";
 import { db } from "@/lib/db";
-import { type User, usersTable } from "@/lib/schema/users";
+import { usersTable } from "@/lib/schema/users";
 import { and, eq } from "drizzle-orm";
 import { projectUsersTable } from "@/lib/schema/project-users";
+import type { User } from "@/lib/types/db-types";
 
 export const PUT = withAuth(async (req, ctx) => {
   try {

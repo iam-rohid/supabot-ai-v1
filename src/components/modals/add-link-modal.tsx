@@ -41,8 +41,8 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 import { Checkbox } from "../ui/checkbox";
 import { useQueryClient } from "@tanstack/react-query";
-import { LinkModel } from "@/lib/schema/links";
 import { ApiResponse } from "@/lib/types";
+import type { LinkModel } from "@/lib/types/db-types";
 
 const AddSingleLink = ({
   onOpenChange,

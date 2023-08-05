@@ -7,14 +7,16 @@ import {
   withAuth,
   WithAuthContext,
 } from "../../utilts";
-import { Project, projectsTable } from "@/lib/schema/projects";
-import { ProjectUser, projectUsersTable } from "@/lib/schema/project-users";
+import { projectsTable } from "@/lib/schema/projects";
+import { projectUsersTable } from "@/lib/schema/project-users";
 import { db } from "@/lib/db";
 import { and, eq } from "drizzle-orm";
-import {
+import { projectInvitationsTable } from "@/lib/schema/project-invitations";
+import type {
+  Project,
   ProjectInvitation,
-  projectInvitationsTable,
-} from "@/lib/schema/project-invitations";
+  ProjectUser,
+} from "@/lib/types/db-types";
 
 export type WithProjectContext = {
   params: {

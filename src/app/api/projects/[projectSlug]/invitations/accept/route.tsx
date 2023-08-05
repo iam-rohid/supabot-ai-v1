@@ -3,11 +3,9 @@ import { withProject } from "../../utils";
 import type { ApiResponse } from "@/lib/types";
 import { db } from "@/lib/db";
 import { projectUsersTable } from "@/lib/schema/project-users";
-import {
-  type ProjectInvitation,
-  projectInvitationsTable,
-} from "@/lib/schema/project-invitations";
+import { projectInvitationsTable } from "@/lib/schema/project-invitations";
 import { and, eq } from "drizzle-orm";
+import type { ProjectInvitation } from "@/lib/types/db-types";
 
 export const POST = withProject(async (req, ctx) => {
   if (!ctx.invitation) {

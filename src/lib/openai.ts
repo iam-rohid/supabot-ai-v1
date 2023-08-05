@@ -1,3 +1,4 @@
+import "server-only";
 import { Configuration, OpenAIApi } from "openai-edge";
 
 const configuration = new Configuration({

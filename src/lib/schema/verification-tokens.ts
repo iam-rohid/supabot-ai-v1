@@ -1,4 +1,3 @@
-import type { InferModel } from "drizzle-orm";
 import {
   pgTable,
   primaryKey,
@@ -21,9 +20,3 @@ export const verificationTokensTable = pgTable(
     };
   },
 );
-
-export type VerificationToken = InferModel<typeof verificationTokensTable>;
-export type NewVerificationToken = InferModel<
-  typeof verificationTokensTable,
-  "insert"
->;

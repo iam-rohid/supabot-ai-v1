@@ -1,3 +1,4 @@
+import "server-only";
 import { type AuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";

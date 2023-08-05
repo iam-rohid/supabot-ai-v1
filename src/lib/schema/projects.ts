@@ -1,4 +1,3 @@
-import type { InferModel } from "drizzle-orm";
 import {
   index,
   pgTable,
@@ -25,6 +24,3 @@ export const projectsTable = pgTable(
     };
   },
 );
-
-export type Project = InferModel<typeof projectsTable>;
-export type NewProject = InferModel<typeof projectsTable, "insert">;

@@ -1,20 +1,18 @@
 import { NextResponse } from "next/server";
 import { withProject } from "../utils";
-import { ApiResponse } from "@/lib/types";
+import type { ApiResponse } from "@/lib/types";
 import { db } from "@/lib/db";
 import { projectUsersTable } from "@/lib/schema/project-users";
 import { usersTable } from "@/lib/schema/users";
 import { and, eq } from "drizzle-orm";
-import {
-  ProjectInvitation,
-  projectInvitationsTable,
-} from "@/lib/schema/project-invitations";
+import { projectInvitationsTable } from "@/lib/schema/project-invitations";
 import { randomBytes } from "crypto";
 import { verificationTokensTable } from "@/lib/schema/verification-tokens";
 import { sendEmail } from "@/lib/emails";
 import { APP_NAME } from "@/lib/constants";
 import ProjectInvitationEmail from "@/emails/project-invitation-email";
 import { hashToken } from "@/lib/auth";
+import type { ProjectInvitation } from "@/lib/types/db-types";
 
 export const POST = withProject(
   async (req, ctx) => {

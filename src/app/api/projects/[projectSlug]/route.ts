@@ -1,9 +1,10 @@
 import type { ApiResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { withProject } from "./utils";
-import { Project, projectsTable } from "@/lib/schema/projects";
+import { projectsTable } from "@/lib/schema/projects";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import type { Project } from "@/lib/types/db-types";
 
 export const GET = withProject(async (_, ctx) => {
   const [project] = await db

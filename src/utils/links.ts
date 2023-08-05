@@ -1,16 +1,16 @@
+import "server-only";
 import { cache } from "react";
 import { db } from "@/lib/db";
 import { linksTable } from "@/lib/schema/links";
 import { eq } from "drizzle-orm";
-import { projectsTable } from "@/lib/schema/projects";
 
-export const getLinksByProjectSlug = cache(async (projectSlug: string) => {
-  const [project] = await db
-    .select({ id: projectsTable.id })
-    .from(projectsTable)
-    .where(eq(projectsTable.slug, projectSlug));
-  return db
+export const revalidate = 3600;
+
+export const getLinksByProjectId = cache(async (projectId: string) => {
+  console.log("getLinksByProjectId", { projectId });
+  const links = await db
     .select()
     .from(linksTable)
-    .where(eq(linksTable.projectId, project.id));
+    .where(eq(linksTable.projectId, projectId));
+  return links;
 });

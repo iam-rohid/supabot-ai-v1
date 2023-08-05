@@ -7,7 +7,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { projectsTable } from "./projects";
 import { usersTable } from "./users";
-import type { InferModel } from "drizzle-orm";
 
 export const projectUserRole = pgEnum("project_user_role", [
   "owner",
@@ -34,5 +33,3 @@ export const projectUsersTable = pgTable(
     };
   },
 );
-
-export type ProjectUser = InferModel<typeof projectUsersTable>;

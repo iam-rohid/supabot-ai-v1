@@ -18,7 +18,7 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Project } from "@/lib/schema/projects";
+import type { Project } from "@/lib/types/db-types";
 import { UseModalReturning } from "./types";
 import { useSession } from "next-auth/react";
 

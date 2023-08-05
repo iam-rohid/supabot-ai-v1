@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ProjectInvitation } from "@/lib/schema/project-invitations";
+import type { ProjectInvitation } from "@/lib/types/db-types";
 import { MoreVertical } from "lucide-react";
 
 export default function InvitationRowActionDropdownButton({

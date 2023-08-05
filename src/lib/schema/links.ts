@@ -8,7 +8,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { projectsTable } from "./projects";
-import type { InferModel } from "drizzle-orm";
 
 export const linkTrainingStatus = pgEnum("link_training_status", [
   "idle",
@@ -39,6 +38,3 @@ export const linksTable = pgTable(
     };
   },
 );
-
-export type LinkModel = InferModel<typeof linksTable>;
-export type NewLinkModel = InferModel<typeof linksTable, "insert">;

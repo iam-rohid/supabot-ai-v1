@@ -24,10 +24,10 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ApiResponse } from "@/lib/types";
-import { ProjectInvitation } from "@/lib/schema/project-invitations";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import type { ProjectInvitation } from "@/lib/types/db-types";
 
 const inviteSchema = z.object({
   email: z.string().min(1).email(),
