@@ -115,7 +115,7 @@ dependencies:
     version: 2.30.0
   drizzle-orm:
     specifier: ^0.27.2
-    version: 0.27.2(@neondatabase/serverless@0.5.6)(postgres@3.3.5)
+    version: 0.27.2(@neondatabase/serverless@0.5.6)
   get-sitemap-links:
     specifier: ^1.1.0
     version: 1.1.0
@@ -158,9 +158,6 @@ dependencies:
   pgvector:
     specifier: git://github.com/pgvector/pgvector-node
     version: github.com/pgvector/pgvector-node/009773442e9a797b13ea58a336dfd54237cb264e
-  postgres:
-    specifier: ^3.3.5
-    version: 3.3.5
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -3904,7 +3901,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.27.2(@neondatabase/serverless@0.5.6)(postgres@3.3.5):
+  /drizzle-orm@0.27.2(@neondatabase/serverless@0.5.6):
     resolution: {integrity: sha512-ZvBvceff+JlgP7FxHKe0zOU9CkZ4RcOtibumIrqfYzDGuOeF0YUY0F9iMqYpRM7pxnLRfC+oO7rWOUH3T5oFQA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -3967,7 +3964,6 @@ packages:
         optional: true
     dependencies:
       '@neondatabase/serverless': 0.5.6
-      postgres: 3.3.5
     dev: false
 
   /duplexer2@0.1.4:
@@ -6733,10 +6729,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       xtend: 4.0.2
-    dev: false
-
-  /postgres@3.3.5:
-    resolution: {integrity: sha512-+JD93VELV9gHkqpV5gdL5/70HdGtEw4/XE1S4BC8f1mcPmdib3K5XsKVbnR1XcAyC41zOnifJ+9YRKxdIsXiUw==}
     dev: false
 
   /preact-render-to-string@5.2.6(preact@10.16.0):
