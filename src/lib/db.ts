@@ -1,6 +1,6 @@
 // import "server-only";
-import { NeonQueryFunction, neon } from "@neondatabase/serverless";
-import { NeonHttpDatabase, drizzle } from "drizzle-orm/neon-http";
+import { type NeonQueryFunction, neon } from "@neondatabase/serverless";
+import { type NeonHttpDatabase, drizzle } from "drizzle-orm/neon-http";
 
 declare global {
   var sql: NeonQueryFunction<false, false> | undefined;
