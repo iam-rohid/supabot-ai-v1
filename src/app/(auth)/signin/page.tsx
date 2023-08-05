@@ -3,12 +3,22 @@ import { Metadata } from "next";
 import SignInForm from "./signin-form";
 import Link from "next/link";
 import { Suspense } from "react";
+import { getSession } from "@/utils/session";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: `Sign in to ${APP_NAME}`,
 };
 
-export default function SignInPage() {
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: { next?: string };
+}) {
+  const session = await getSession();
+  if (session) {
+    return redirect(searchParams.next || "/dashboard");
+  }
   return (
     <div className="relative flex min-h-screen flex-col justify-center py-16">
       <div className="mx-auto grid w-full max-w-md gap-6 px-6">

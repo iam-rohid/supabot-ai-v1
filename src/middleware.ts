@@ -42,7 +42,6 @@ const protectProject: MiddlewareHandler<{ token: JWT; slug: string }> = async (
     )`,
     [project.id, ctx.token.sub],
   );
-  console.log({ projectUser });
 
   if (!projectUser.exists) {
     const [invitedUser] = await sql(
