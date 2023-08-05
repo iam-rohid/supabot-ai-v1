@@ -1,5 +1,4 @@
 import {
-  customType,
   jsonb,
   pgTable,
   smallint,
@@ -8,22 +7,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { linksTable } from "./links";
-import type { InferModel } from "drizzle-orm";
-
-const vector = customType<{
-  data: number[];
-  config: {
-    dimensions: number;
-  };
-}>({
-  dataType: (config) => {
-    const dimensions = config?.dimensions || 3;
-    return `vector(${dimensions})`;
-  },
-  toDriver(value) {
-    return JSON.stringify(value);
-  },
-});
+import { vector } from "pgvector/drizzle-orm";
+import { OPENAI_EMBEDDING_DIMENSIONS } from "../constants";
 
 export const embeddingsTable = pgTable("embeddings", {
   id: uuid("id").primaryKey().defaultRandom().notNull(),
@@ -33,7 +18,9 @@ export const embeddingsTable = pgTable("embeddings", {
     .notNull()
     .references(() => linksTable.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+  embedding: vector("embedding", {
+    dimensions: OPENAI_EMBEDDING_DIMENSIONS,
+  }).notNull(),
   tokenCount: smallint("token_count").notNull(),
   metadata: jsonb("metadata").$type<Record<string, any>>(),
 });

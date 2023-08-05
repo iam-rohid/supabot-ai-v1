@@ -1,11 +1,11 @@
 DO $$ BEGIN
- CREATE TYPE "ChatbotUserRole" AS ENUM('owner', 'admin', 'member');
+ CREATE TYPE "link_training_status" AS ENUM('idle', 'training', 'trained', 'failed');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "link_training_status" AS ENUM('idle', 'training', 'trained', 'failed');
+ CREATE TYPE "project_user_role" AS ENUM('owner', 'admin', 'member');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS "accounts" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"user_id" uuid NOT NULL,
-	"type" varchar NOT NULL,
+	"type" varchar(80) NOT NULL,
 	"provider" varchar(80) NOT NULL,
 	"provider_account_id" varchar(80) NOT NULL,
 	"refresh_token" varchar(255),
@@ -33,29 +33,11 @@ CREATE TABLE IF NOT EXISTS "accounts" (
 	"session_state" varchar(80)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "chatbot_users" (
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"chatbot_id" uuid NOT NULL,
-	"user_id" uuid NOT NULL,
-	"role" "ChatbotUserRole" DEFAULT 'member' NOT NULL,
-	CONSTRAINT chatbot_users_chatbot_id_user_id PRIMARY KEY("chatbot_id","user_id")
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "chatbots" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"name" varchar(32) NOT NULL,
-	"slug" varchar(32) NOT NULL,
-	"description" varchar(300)
-);
---> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "embeddings" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"page_id" uuid NOT NULL,
+	"link_id" uuid NOT NULL,
 	"content" text NOT NULL,
 	"embedding" "vector(1536)" NOT NULL,
 	"token_count" smallint NOT NULL,
@@ -68,9 +50,36 @@ CREATE TABLE IF NOT EXISTS "links" (
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"last_trained_at" timestamp,
 	"url" varchar(255) NOT NULL,
-	"chatbot_id" uuid NOT NULL,
+	"project_id" uuid NOT NULL,
 	"metadata" jsonb,
 	"training_status" "link_training_status" DEFAULT 'idle' NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "project_invitations" (
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"project_id" uuid NOT NULL,
+	"expires" timestamp NOT NULL,
+	"role" "project_user_role" DEFAULT 'member' NOT NULL,
+	CONSTRAINT project_invitations_project_id_email PRIMARY KEY("project_id","email")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "project_users" (
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"project_id" uuid NOT NULL,
+	"user_id" uuid NOT NULL,
+	"role" "project_user_role" DEFAULT 'member' NOT NULL,
+	CONSTRAINT project_users_project_id_user_id PRIMARY KEY("project_id","user_id")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "projects" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"name" varchar(32) NOT NULL,
+	"slug" varchar(32) NOT NULL,
+	"description" varchar(300)
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "sessions" (
@@ -99,9 +108,9 @@ CREATE TABLE IF NOT EXISTS "verification_tokens" (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "accounts_provider_provider_account_id_index" ON "accounts" ("provider","provider_account_id");--> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS "chatbots_slug_index" ON "chatbots" ("slug");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "chatbots_name_index" ON "chatbots" ("name");--> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS "links_chatbot_id_url_index" ON "links" ("chatbot_id","url");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "links_project_id_url_index" ON "links" ("project_id","url");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "projects_slug_index" ON "projects" ("slug");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "projects_name_index" ON "projects" ("name");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "sessions_session_token_index" ON "sessions" ("session_token");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "users_email_index" ON "users" ("email");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "verification_tokens_token_index" ON "verification_tokens" ("token");--> statement-breakpoint
@@ -112,25 +121,31 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "chatbot_users" ADD CONSTRAINT "chatbot_users_chatbot_id_chatbots_id_fk" FOREIGN KEY ("chatbot_id") REFERENCES "chatbots"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "embeddings" ADD CONSTRAINT "embeddings_link_id_links_id_fk" FOREIGN KEY ("link_id") REFERENCES "links"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "chatbot_users" ADD CONSTRAINT "chatbot_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "links" ADD CONSTRAINT "links_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "embeddings" ADD CONSTRAINT "embeddings_page_id_links_id_fk" FOREIGN KEY ("page_id") REFERENCES "links"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "project_invitations" ADD CONSTRAINT "project_invitations_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "links" ADD CONSTRAINT "links_chatbot_id_chatbots_id_fk" FOREIGN KEY ("chatbot_id") REFERENCES "chatbots"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "project_users" ADD CONSTRAINT "project_users_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "projects"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "project_users" ADD CONSTRAINT "project_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

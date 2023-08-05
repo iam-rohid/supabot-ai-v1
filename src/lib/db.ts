@@ -7,8 +7,8 @@ declare global {
   var db: NeonHttpDatabase<Record<string, never>> | undefined;
 }
 
-const sql = neon(process.env.DATABASE_URL!);
-const db = global.db || drizzle(global.sql || neon(process.env.DATABASE_URL!));
+const sql = global.sql || neon(process.env.DATABASE_URL!);
+const db = global.db || drizzle(sql);
 
 if (process.env.NODE_ENV === "development") {
   global.db = db;

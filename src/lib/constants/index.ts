@@ -37,3 +37,5 @@ export const AUTH_PATHNAMES = new Set(["/signin"]);
 export const SYSTEM_THEME = "system";
 export const THEMES = new Set([SYSTEM_THEME, "light", "dark"]);
 export const STORAGE_KEY = "theme";
+
+export const OPENAI_EMBEDDING_DIMENSIONS = 1536;
