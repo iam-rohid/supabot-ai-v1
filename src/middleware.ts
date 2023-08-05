@@ -23,39 +23,41 @@ const protectProject: MiddlewareHandler<{ token: JWT; slug: string }> = async (
   ev,
   ctx,
 ) => {
+  let canVisit = false;
   const [project] = await sql(
     `SELECT projects.id FROM projects 
     WHERE projects.slug = $1`,
     [ctx.slug],
   );
 
-  if (!project) {
-    return NextResponse.rewrite(
-      new URL("/dashboard/project-not-found", req.url),
-    );
-  }
-
-  const [projectUser] = await sql(
-    `SELECT EXISTS(
+  if (project) {
+    const [projectUser] = await sql(
+      `SELECT EXISTS(
       SELECT 1 FROM project_users 
       WHERE project_users.project_id = $1 AND project_users.user_id = $2
     )`,
-    [project.id, ctx.token.sub],
-  );
-
-  if (!projectUser.exists) {
-    const [invitedUser] = await sql(
-      `SELECT EXISTS(
+      [project.id, ctx.token.sub],
+    );
+    if (projectUser.exists) {
+      canVisit = true;
+    } else {
+      const [invitedUser] = await sql(
+        `SELECT EXISTS(
         SELECT 1 FROM project_invitations 
         WHERE project_invitations.project_id = $1 AND project_invitations.email = $2
       )`,
-      [project.id, ctx.token.email],
-    );
-    if (!invitedUser.exists) {
-      return NextResponse.rewrite(
-        new URL("/dashboard/project-not-found", req.url),
+        [project.id, ctx.token.email],
       );
+      if (invitedUser.exists) {
+        canVisit = true;
+      }
     }
+  }
+
+  if (!canVisit) {
+    return NextResponse.rewrite(
+      new URL("/dashboard/project-not-found", req.url),
+    );
   }
 
   return NextResponse.next();
