@@ -24,11 +24,8 @@ const protectProject: MiddlewareHandler<{ token: JWT; slug: string }> = async (
   ctx,
 ) => {
   const [project] = await sql(
-    `
-    SELECT * FROM projects 
-    WHERE projects.slug = $1
-    LIMIT 1
-    `,
+    `SELECT projects.id FROM projects 
+    WHERE projects.slug = $1`,
     [ctx.slug],
   );
 
@@ -39,24 +36,23 @@ const protectProject: MiddlewareHandler<{ token: JWT; slug: string }> = async (
   }
 
   const [projectUser] = await sql(
-    `
-    SELECT * FROM project_users 
-    WHERE project_users.project_id = $1 AND project_users.user_id = $2 
-    LIMIT 1
-    `,
+    `SELECT EXISTS(
+      SELECT 1 FROM project_users 
+      WHERE project_users.project_id = $1 AND project_users.user_id = $2
+    )`,
     [project.id, ctx.token.sub],
   );
+  console.log({ projectUser });
 
-  if (!projectUser) {
+  if (!projectUser.exists) {
     const [invitedUser] = await sql(
-      `
-      SELECT * FROM project_invitations 
-      WHERE project_invitations.project_id = $1 AND project_invitations.email = $2 
-      LIMIT 1
-      `,
+      `SELECT EXISTS(
+        SELECT 1 FROM project_invitations 
+        WHERE project_invitations.project_id = $1 AND project_invitations.email = $2
+      )`,
       [project.id, ctx.token.email],
     );
-    if (!invitedUser) {
+    if (!invitedUser.exists) {
       return NextResponse.rewrite(
         new URL("/dashboard/project-not-found", req.url),
       );
