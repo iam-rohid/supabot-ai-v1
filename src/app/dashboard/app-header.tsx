@@ -13,52 +13,54 @@ export default function AppHeader() {
   const { projectSlug } = useParams();
 
   return (
-    <header className="sticky top-0 z-20 border-b bg-card text-card-foreground">
-      <div className="container flex h-16 items-center justify-between">
-        <Button variant="ghost" size="icon" className="rounded-full" asChild>
-          <Link href="/dashboard">
-            <div className="h-10 w-10 rounded-full bg-accent-foreground" />
-          </Link>
-        </Button>
-        <span className="mx-4 text-2xl text-muted-foreground/50">/</span>
-        <ProjectSwitcher />
-        <div className="flex flex-1 items-center justify-end gap-4">
-          <ThemeSwitcher />
-          <UserButton />
+    <>
+      <header className="sticky top-0 z-20 border-b bg-card text-card-foreground">
+        <div className="container flex h-16 items-center justify-between">
+          <Button variant="ghost" size="icon" className="rounded-full" asChild>
+            <Link href="/dashboard">
+              <div className="h-10 w-10 rounded-full bg-accent-foreground" />
+            </Link>
+          </Button>
+          <span className="mx-4 text-2xl text-muted-foreground/50">/</span>
+          <ProjectSwitcher />
+          <div className="flex flex-1 items-center justify-end gap-4">
+            <ThemeSwitcher />
+            <UserButton />
+          </div>
         </div>
-      </div>
-      <NavBar
-        menuList={
-          typeof projectSlug === "string"
-            ? [
-                {
-                  href: `/dashboard/${projectSlug}`,
-                  label: "Overview",
-                  exactMatch: true,
-                },
-                {
-                  href: `/dashboard/${projectSlug}/links`,
-                  label: "Links",
-                },
-                {
-                  href: `/dashboard/${projectSlug}/settings`,
-                  label: "Settings",
-                },
-              ]
-            : [
-                {
-                  href: "/dashboard",
-                  label: "Overview",
-                  exactMatch: true,
-                },
-                {
-                  href: "/dashboard/settings",
-                  label: "Settings",
-                },
-              ]
-        }
-      />
-    </header>
+        <NavBar
+          menuList={
+            typeof projectSlug === "string"
+              ? [
+                  {
+                    href: `/dashboard/${projectSlug}`,
+                    label: "Overview",
+                    exactMatch: true,
+                  },
+                  {
+                    href: `/dashboard/${projectSlug}/links`,
+                    label: "Links",
+                  },
+                  {
+                    href: `/dashboard/${projectSlug}/settings`,
+                    label: "Settings",
+                  },
+                ]
+              : [
+                  {
+                    href: "/dashboard",
+                    label: "Overview",
+                    exactMatch: true,
+                  },
+                  {
+                    href: "/dashboard/settings",
+                    label: "Settings",
+                  },
+                ]
+          }
+        />
+      </header>
+    </>
   );
 }
 

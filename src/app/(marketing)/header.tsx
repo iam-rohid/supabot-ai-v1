@@ -9,49 +9,51 @@ import { Suspense } from "react";
 
 export default function Header() {
   return (
-    <header className="border-b bg-card text-card-foreground">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex-1">
-          <Link
-            href={HOME_DOMAIN}
-            className="text-xl font-bold text-accent-foreground"
-          >
-            {APP_NAME}
-          </Link>
+    <>
+      <header className="bg-card text-card-foreground">
+        <div className="container flex h-16 items-center justify-between">
+          <div className="flex-1">
+            <Link
+              href={HOME_DOMAIN}
+              className="text-xl font-bold text-accent-foreground"
+            >
+              {APP_NAME}
+            </Link>
+          </div>
+          <nav className="flex items-center gap-8 max-md:hidden">
+            <NavLink
+              className="text-sm font-medium"
+              inactiveClassName="text-muted-foreground hover:text-accent-foreground"
+              activeClassName="text-accent-foreground"
+              href="/about"
+            >
+              About
+            </NavLink>
+            <NavLink
+              className="text-sm font-medium"
+              inactiveClassName="text-muted-foreground hover:text-accent-foreground"
+              activeClassName="text-accent-foreground"
+              href="/blog"
+            >
+              Blog
+            </NavLink>
+            <NavLink
+              className="text-sm font-medium"
+              inactiveClassName="text-muted-foreground hover:text-accent-foreground"
+              activeClassName="text-accent-foreground"
+              href="/pricing"
+            >
+              Pricing
+            </NavLink>
+          </nav>
+          <div className="flex flex-1 items-center justify-end">
+            <Suspense fallback={<Skeleton className="h-10 w-32" />}>
+              <AuthButtonGroup />
+            </Suspense>
+          </div>
         </div>
-        <nav className="flex items-center gap-8 max-md:hidden">
-          <NavLink
-            className="text-sm font-medium"
-            inactiveClassName="text-muted-foreground hover:text-accent-foreground"
-            activeClassName="text-accent-foreground"
-            href="/about"
-          >
-            About
-          </NavLink>
-          <NavLink
-            className="text-sm font-medium"
-            inactiveClassName="text-muted-foreground hover:text-accent-foreground"
-            activeClassName="text-accent-foreground"
-            href="/blog"
-          >
-            Blog
-          </NavLink>
-          <NavLink
-            className="text-sm font-medium"
-            inactiveClassName="text-muted-foreground hover:text-accent-foreground"
-            activeClassName="text-accent-foreground"
-            href="/pricing"
-          >
-            Pricing
-          </NavLink>
-        </nav>
-        <div className="flex flex-1 items-center justify-end">
-          <Suspense fallback={<Skeleton className="h-10 w-32" />}>
-            <AuthButtonGroup />
-          </Suspense>
-        </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
 

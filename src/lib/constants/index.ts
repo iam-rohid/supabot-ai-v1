@@ -3,6 +3,7 @@ export const APP_NAME = "SupaBot AI";
 export const LOCALHOST = "localhost:3000";
 export const DOMAIN = "supabotai.com";
 export const EMAIL_DOMAIN = "supabotai.com";
+export const GITHUB_REPO = "https://github.com/iam-rohid/supabot-ai";
 
 export const HOME_HOSTNAMES = new Set([LOCALHOST, DOMAIN]);
 export const HOME_DOMAIN =
